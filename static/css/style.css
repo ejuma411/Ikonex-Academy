@@ -14,541 +14,178 @@
     --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
 }
 
-html, body {
-    min-height: 100%;
-}
-
-body.app-body {
-    background:
-        radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 30%),
-        linear-gradient(180deg, #f8fbff 0%, var(--app-bg) 100%);
-    color: var(--text-main);
-    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-}
-
-.app-shell {
-    max-width: 100%;
-}
-
-.app-sidebar-col {
-    background: var(--sidebar-bg);
-}
+/* =========================
+   SIDEBAR ENHANCEMENTS
+   ========================= */
 
 .sidebar-shell {
-    min-height: 100vh;
-    padding: 1.25rem 1rem 1.5rem;
-    color: #fff;
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.15) transparent;
 }
 
-.brand-panel {
+.sidebar-shell::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-shell::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.15);
+    border-radius: 999px;
+}
+
+.sidebar-user-card {
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 0.25rem 0 0.75rem;
-}
-
-.brand-logo-card,
-.navbar-logo-card {
-    background: #fff;
+    gap: .75rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.06);
     border-radius: 1rem;
-    padding: 0.65rem;
-    box-shadow: var(--shadow-sm);
-    display: inline-flex;
+    backdrop-filter: blur(8px);
+}
+
+.sidebar-user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.1rem;
 }
 
-.brand-logo-card {
-    width: 100%;
-    max-width: 180px;
-    min-height: 88px;
+.sidebar-user-name {
+    color: #fff;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
-.brand-logo {
-    width: 100%;
-    max-width: 132px;
-    height: auto;
-    object-fit: contain;
-    display: block;
+.sidebar-user-role {
+    font-size: .8rem;
+    color: rgba(255,255,255,.55);
 }
 
-.navbar-logo-card {
-    width: 56px;
-    height: 56px;
-    flex: 0 0 56px;
-}
-
-.navbar-logo {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
-
-.sidebar-divider {
-    height: 1px;
-    background: var(--sidebar-border);
-    margin: 0.5rem 0 1rem;
+.sidebar-section-title {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.45);
+    margin: 1.2rem .75rem .65rem;
 }
 
 .sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.85rem 0.95rem;
-    border-radius: 0.9rem;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    margin-bottom: 0.35rem;
+    position: relative;
 }
 
-.sidebar-link span {
-    white-space: nowrap;
+.sidebar-link.active {
+    background: linear-gradient(
+        135deg,
+        rgba(15,118,110,.30),
+        rgba(20,184,166,.10)
+    );
+    color: #fff;
+}
+
+.sidebar-link.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10%;
+    height: 80%;
+    width: 4px;
+    border-radius: 999px;
+    background: #2dd4bf;
+}
+
+.sidebar-link.active i {
+    color: #5eead4;
+}
+
+.sidebar-link:hover {
+    transform: translateX(4px);
+}
+
+.sidebar-link:hover i {
+    transform: scale(1.1);
 }
 
 .sidebar-link i {
-    font-size: 1.05rem;
-    color: rgba(255, 255, 255, 0.8);
+    transition: all .2s ease;
 }
 
-.sidebar-link:hover,
-.sidebar-link:focus {
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
-    transform: translateX(2px);
+.sidebar-logout {
+    margin-top: auto;
+    background: rgba(239,68,68,.08);
 }
 
-.app-main-col {
-    background: transparent;
+.sidebar-logout:hover {
+    background: rgba(239,68,68,.18);
 }
 
-.app-navbar {
-    min-height: 76px;
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(219, 227, 238, 0.8);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.app-navbar-brand {
-    color: var(--text-main);
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-}
-
-.navbar-subtitle {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 0.15rem;
-}
-
-.navbar-user {
-    color: var(--text-main);
-    font-weight: 600;
-    background: var(--surface-soft);
-    border: 1px solid var(--line);
-    padding: 0.55rem 0.9rem;
-    border-radius: 999px;
-}
-
-.navbar-user-label {
-    font-size: 0.92rem;
-}
-
-.auth-body {
-    min-height: 100vh;
-    background:
-        radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 26%),
-        radial-gradient(circle at bottom left, rgba(17, 24, 39, 0.08), transparent 28%),
-        linear-gradient(180deg, #f8fbff 0%, #edf3fa 100%);
-    display: grid;
-    place-items: center;
-    padding: 1.25rem;
-}
-
-.auth-shell {
-    width: 100%;
-    max-width: 460px;
-}
-
-.auth-card {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(219, 227, 238, 0.95);
-    border-radius: 1.5rem;
-    box-shadow: var(--shadow-md);
-    padding: 1.75rem;
-    backdrop-filter: blur(12px);
-}
-
-.auth-brand {
+.sidebar-version {
     text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.auth-brand h1 {
-    font-size: 1.5rem;
-    font-weight: 800;
     margin-top: 1rem;
-    margin-bottom: 0.25rem;
-    color: var(--text-main);
+    font-size: .72rem;
+    color: rgba(255,255,255,.35);
 }
 
-.auth-brand p {
-    margin: 0;
-    color: var(--text-muted);
-}
+/* =========================
+   RESPONSIVENESS
+   ========================= */
 
-.auth-logo-card {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto;
-    border-radius: 1.2rem;
-}
+@media (max-width: 991.98px) {
 
-.auth-form .form-control {
-    border-radius: 0.9rem;
-}
-
-.auth-password-input {
-    padding-right: 3.35rem;
-}
-
-.auth-password-toggle {
-    position: absolute;
-    right: 0.7rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 2.15rem;
-    height: 2.15rem;
-    border-radius: 999px;
-    color: var(--text-muted);
-    border: 1px solid var(--line);
-    background: rgba(248, 250, 252, 0.96);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    box-shadow: var(--shadow-sm);
-    text-decoration: none;
-    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    z-index: 2;
-}
-
-.auth-password-toggle:hover,
-.auth-password-toggle:focus {
-    color: var(--brand);
-    background: #fff;
-    border-color: rgba(15, 118, 110, 0.28);
-    text-decoration: none;
-    transform: translateY(-50%) scale(1.03);
-    outline: none;
-}
-
-.auth-password-toggle i {
-    font-size: 1rem;
-    line-height: 1;
-}
-
-.app-main {
-    color: var(--text-main);
-    width: 100%;
-    overflow-x: hidden;
-}
-
-.app-main h2,
-.app-main h3,
-.app-main h4,
-.app-main h5 {
-    letter-spacing: -0.02em;
-}
-
-.card,
-.table,
-.form-control,
-.form-select,
-.btn {
-    border-radius: 0.95rem;
-}
-
-.card {
-    border: 1px solid rgba(219, 227, 238, 0.9);
-    box-shadow: var(--shadow-sm);
-    background: var(--surface);
-}
-
-.card-body {
-    padding: 1.25rem;
-}
-
-.table {
-    overflow: hidden;
-    background: var(--surface);
-    border-color: var(--line);
-}
-
-.table > :not(caption) > * > * {
-    padding: 0.9rem 1rem;
-    vertical-align: middle;
-}
-
-.table thead th,
-.table tr:first-child th {
-    background: #eef4fb;
-    color: #1f2937;
-    border-bottom: 0;
-    font-weight: 700;
-}
-
-.table-bordered > :not(caption) > * {
-    border-width: 0;
-}
-
-.table-bordered > :not(caption) > * > * {
-    border-color: var(--line);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--brand), #0ea5a4);
-    border-color: transparent;
-    box-shadow: 0 10px 20px rgba(15, 118, 110, 0.18);
-}
-
-.btn-primary:hover,
-.btn-primary:focus {
-    background: linear-gradient(135deg, var(--brand-dark), var(--brand));
-    border-color: transparent;
-}
-
-.btn-outline-primary {
-    color: var(--brand);
-    border-color: rgba(15, 118, 110, 0.25);
-}
-
-.btn-outline-primary:hover,
-.btn-outline-primary:focus {
-    background: var(--brand);
-    border-color: var(--brand);
-    color: #fff;
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #15803d, #16a34a);
-    border-color: transparent;
-}
-
-.btn-outline-secondary {
-    border-color: rgba(107, 114, 128, 0.25);
-}
-
-.form-control,
-.form-select {
-    border: 1px solid var(--line);
-    padding: 0.8rem 0.95rem;
-    background: #fff;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="number"],
-input[type="email"],
-input[type="date"],
-input[type="tel"],
-select,
-textarea {
-    width: 100%;
-    border: 1px solid var(--line);
-    border-radius: 0.95rem;
-    padding: 0.8rem 0.95rem;
-    background: #fff;
-    color: var(--text-main);
-}
-
-.form-control:focus,
-.form-select:focus {
-    border-color: rgba(15, 118, 110, 0.45);
-    box-shadow: 0 0 0 0.2rem rgba(15, 118, 110, 0.12);
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus,
-input[type="email"]:focus,
-input[type="date"]:focus,
-input[type="tel"]:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: rgba(15, 118, 110, 0.45);
-    box-shadow: 0 0 0 0.2rem rgba(15, 118, 110, 0.12);
-}
-
-.alert {
-    border-radius: 0.95rem;
-}
-
-.list-group-item {
-    border-color: var(--line);
-}
-
-.app-sidebar-toggle {
-    width: 46px;
-    height: 46px;
-    border-radius: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-sm);
-}
-
-.app-sidebar-toggle i {
-    font-size: 1.2rem;
-}
-
-.app-mobile-sidebar {
-    background: var(--sidebar-bg);
-    color: #fff;
-    max-width: 320px;
-}
-
-.app-mobile-sidebar .offcanvas-header {
-    border-bottom: 1px solid var(--sidebar-border);
-}
-
-.app-mobile-sidebar .sidebar-shell {
-    min-height: auto;
-    position: static;
-    padding: 0;
-}
-
-.app-mobile-sidebar .brand-panel {
-    justify-content: flex-start;
-    padding-top: 0;
-}
-
-.app-mobile-sidebar .brand-logo-card {
-    max-width: 160px;
-}
-
-.app-mobile-sidebar .sidebar-link {
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 767.98px) {
-    .app-navbar {
-        padding-left: 1rem;
-        padding-right: 1rem;
+    .sidebar-user-card {
+        padding: .85rem;
     }
 
-    .app-navbar-copy {
-        min-width: 0;
-    }
-
-    .app-navbar-brand {
-        font-size: 0.98rem;
-        line-height: 1.15;
-    }
-
-    .navbar-subtitle {
-        font-size: 0.78rem;
-    }
-
-    .navbar-logo-card {
-        width: 48px;
-        height: 48px;
-        flex-basis: 48px;
-    }
-
-    .app-main {
-        padding: 1rem !important;
-    }
-
-    .card-body {
-        padding: 1rem;
-    }
-
-    .app-navbar {
-        gap: 1rem;
-        flex-wrap: wrap;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-    }
-
-    .navbar-user {
-        width: auto;
-        margin-left: auto;
-        padding: 0.45rem 0.75rem;
-        font-size: 0.9rem;
-    }
-
-    table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .table > :not(caption) > * > * {
-        min-width: 110px;
-    }
-
-    .table td,
-    .table th {
-        white-space: nowrap;
+    .sidebar-user-avatar {
+        width: 40px;
+        height: 40px;
     }
 
     .sidebar-link {
-        padding: 0.75rem 0.85rem;
+        padding: .8rem .85rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .sidebar-shell {
+        min-height: auto;
     }
 
-    .auth-card {
-        padding: 1.25rem;
-        border-radius: 1.25rem;
+    .sidebar-user-card {
+        margin-bottom: .75rem;
     }
 
-    .auth-password-toggle {
-        right: 0.7rem;
-        width: 2rem;
-        height: 2rem;
+    .sidebar-section-title {
+        margin-top: 1rem;
+    }
+
+    .sidebar-link {
+        font-size: .95rem;
     }
 }
 
 @media (max-width: 575.98px) {
-    .app-mobile-sidebar {
-        max-width: 100vw;
-        width: 100vw;
+
+    .sidebar-user-name {
+        font-size: .92rem;
     }
 
-    .app-main {
-        padding-left: 0.85rem !important;
-        padding-right: 0.85rem !important;
+    .sidebar-user-role {
+        font-size: .75rem;
     }
 
-    .card {
-        border-radius: 0.8rem;
+    .sidebar-link {
+        padding: .75rem .8rem;
     }
 
-    .brand-logo-card {
-        max-width: 170px;
-        min-height: 80px;
-    }
-
-    .auth-body {
-        padding: 0.85rem;
-    }
-
-    .auth-logo-card {
-        width: 100px;
-        height: 100px;
+    .sidebar-link i {
+        font-size: 1rem;
     }
 }

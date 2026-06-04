@@ -5,6 +5,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.history/
+.pytest_cache/
 
 # =========================
 # Virtual Environment

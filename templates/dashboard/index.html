@@ -6,44 +6,273 @@ Dashboard
 
 {% block content %}
 
-<h2 class="mb-4">Dashboard</h2>
+<style>
+.dashboard-hero{
+    background: linear-gradient(135deg, var(--brand), #14b8a6);
+    color:#fff;
+    border-radius:1.25rem;
+    padding:2rem;
+    margin-bottom:1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-hero h2{
+    margin-bottom:.5rem;
+    font-weight:700;
+}
+
+.dashboard-stat{
+    border:none;
+    transition:.25s ease;
+    height:100%;
+}
+
+.dashboard-stat:hover{
+    transform:translateY(-4px);
+}
+
+.dashboard-icon{
+    width:60px;
+    height:60px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.4rem;
+    background:var(--brand-soft);
+    color:var(--brand);
+}
+
+.dashboard-number{
+    font-size:2rem;
+    font-weight:700;
+    margin-bottom:0;
+}
+
+.dashboard-label{
+    color:var(--text-muted);
+    margin-bottom:0;
+}
+
+.quick-actions .btn{
+    border-radius:12px;
+    padding:.75rem 1rem;
+}
+
+.dashboard-section-title{
+    font-size:1.1rem;
+    font-weight:700;
+    margin-bottom:1rem;
+}
+
+.activity-item{
+    padding:.85rem 0;
+    border-bottom:1px solid var(--line);
+}
+
+.activity-item:last-child{
+    border-bottom:none;
+}
+
+.summary-list li{
+    padding:.75rem 0;
+    border-bottom:1px solid var(--line);
+}
+
+.summary-list li:last-child{
+    border-bottom:none;
+}
+</style>
+
+<!-- Hero Section -->
+
+<div class="dashboard-hero">
+
+    <div class="row align-items-center">
+
+        <div class="col-lg-8">
+            <h2>Welcome Back, Administrator</h2>
+
+            <p class="mb-0">
+                Manage students, classes, assessments, grades and reports
+                from one centralized dashboard.
+            </p>
+        </div>
+
+        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+
+            <div class="quick-actions d-flex flex-wrap justify-content-lg-end gap-2">
+
+                <a href="{% url 'student_create' %}" class="btn btn-light">
+                    <i class="bi bi-person-plus"></i>
+                    Add Student
+                </a>
+
+                <a href="{% url 'assessment_create' %}" class="btn btn-outline-light">
+                    <i class="bi bi-journal-plus"></i>
+                    New Assessment
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Statistics -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card dashboard-stat">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <p class="dashboard-label">Students</p>
+                    <h3 class="dashboard-number">{{ students_count }}</h3>
+                </div>
+
+                <div class="dashboard-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card dashboard-stat">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <p class="dashboard-label">Classes</p>
+                    <h3 class="dashboard-number">{{ classes_count }}</h3>
+                </div>
+
+                <div class="dashboard-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card dashboard-stat">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <p class="dashboard-label">Subjects</p>
+                    <h3 class="dashboard-number">{{ subjects_count }}</h3>
+                </div>
+
+                <div class="dashboard-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card dashboard-stat">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <p class="dashboard-label">Assessments</p>
+                    <h3 class="dashboard-number">{{ assessments_count }}</h3>
+                </div>
+
+                <div class="dashboard-icon">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Secondary Content -->
 
 <div class="row g-4">
 
-    <div class="col-md-3">
-        <div class="card shadow-sm">
+    <!-- Recent Activity -->
+
+    <div class="col-lg-7">
+
+        <div class="card">
+
             <div class="card-body">
-                <h6>Total Students</h6>
-                <h2>{{ students_count }}</h2>
+
+                <h5 class="dashboard-section-title">
+                    Recent Activity
+                </h5>
+
+                <div class="activity-item">
+                    Student registrations will appear here.
+                </div>
+
+                <div class="activity-item">
+                    Recently entered scores will appear here.
+                </div>
+
+                <div class="activity-item">
+                    New assessments will appear here.
+                </div>
+
+                <div class="activity-item">
+                    Generated reports will appear here.
+                </div>
+
             </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h6>Total Classes</h6>
-                <h2>{{ classes_count }}</h2>
-            </div>
-        </div>
-    </div>
+    <!-- System Summary -->
 
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h6>Total Subjects</h6>
-                <h2>{{ subjects_count }}</h2>
-            </div>
-        </div>
-    </div>
+    <div class="col-lg-5">
 
-    <div class="col-md-3">
-        <div class="card shadow-sm">
+        <div class="card">
+
             <div class="card-body">
-                <h6>Total Assessments</h6>
-                <h2>{{ assessments_count }}</h2>
+
+                <h5 class="dashboard-section-title">
+                    System Summary
+                </h5>
+
+                <ul class="list-unstyled summary-list mb-0">
+
+                    <li>
+                        <strong>{{ students_count }}</strong>
+                        Students Registered
+                    </li>
+
+                    <li>
+                        <strong>{{ classes_count }}</strong>
+                        Active Class Streams
+                    </li>
+
+                    <li>
+                        <strong>{{ subjects_count }}</strong>
+                        Subjects Available
+                    </li>
+
+                    <li>
+                        <strong>{{ assessments_count }}</strong>
+                        Assessments Configured
+                    </li>
+
+                </ul>
+
             </div>
+
         </div>
+
     </div>
 
 </div>

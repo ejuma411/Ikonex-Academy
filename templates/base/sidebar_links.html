@@ -1,49 +1,61 @@
-<a href="{% url 'dashboard' %}" class="sidebar-link">
+<a href="{% url 'dashboard' %}"
+   class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
     <i class="bi bi-speedometer2"></i>
     <span>Dashboard</span>
 </a>
 
-<a href="{% url 'class_list' %}" class="sidebar-link">
+<a href="{% url 'class_list' %}"
+   class="sidebar-link {% if 'class' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-building"></i>
     <span>Class Streams</span>
 </a>
 
-<a href="{% url 'student_list' %}" class="sidebar-link">
+<a href="{% url 'student_list' %}"
+   class="sidebar-link {% if 'student' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-people"></i>
     <span>Students</span>
 </a>
 
-<a href="{% url 'subject_list' %}" class="sidebar-link">
+<a href="{% url 'subject_list' %}"
+   class="sidebar-link {% if 'subject' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-book"></i>
     <span>Subjects</span>
 </a>
 
-<a href="{% url 'assessment_list' %}" class="sidebar-link">
+<a href="{% url 'assessment_list' %}"
+   class="sidebar-link {% if 'assessment' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-pencil-square"></i>
     <span>Assessments</span>
 </a>
 
-<a href="{% url 'score_list' %}" class="sidebar-link">
+<a href="{% url 'score_list' %}"
+   class="sidebar-link {% if 'score' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-clipboard-data"></i>
     <span>Scores</span>
 </a>
 
-<a href="{% url 'grade_scale_list' %}" class="sidebar-link">
+<a href="{% url 'grade_scale_list' %}"
+   class="sidebar-link {% if 'grade' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-percent"></i>
     <span>Grading Scale</span>
 </a>
 
-<a href="{% url 'result_list' %}" class="sidebar-link">
+<a href="{% url 'result_list' %}"
+   class="sidebar-link {% if 'result' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-trophy"></i>
     <span>Results</span>
 </a>
 
-<a href="{% url 'report_list' %}" class="sidebar-link">
+<a href="{% url 'report_list' %}"
+   class="sidebar-link {% if 'report' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-file-earmark-pdf"></i>
     <span>Reports</span>
 </a>
-
-<a href="{% url 'logout' %}" class="sidebar-link">
+<a href="{% url 'logout' %}" class="sidebar-link sidebar-logout">
     <i class="bi bi-box-arrow-right"></i>
     <span>Logout</span>
 </a>
+
+<div class="sidebar-version">
+    Ikonex Academy v1.0
+</div>
