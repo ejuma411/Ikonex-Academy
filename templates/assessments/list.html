@@ -4,7 +4,10 @@
 
 <div class="d-flex justify-content-between">
     <h3>Assessments</h3>
-    <a href="{% url 'assessment_create' %}" class="btn btn-primary">Add Assessment</a>
+    <div class="d-flex gap-2">
+        <a href="{% url 'grade_scale_list' %}" class="btn btn-outline-secondary">Grading Scale</a>
+        <a href="{% url 'assessment_create' %}" class="btn btn-primary">Add Assessment</a>
+    </div>
 </div>
 
 <table class="table table-bordered mt-3">

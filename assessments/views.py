@@ -1,17 +1,20 @@
 from django.shortcuts import get_object_or_404, redirect, render
 
-from assessments.forms import AssessmentForm, ScoreForm
-from assessments.models import Assessment, Score
+from accounts.decorators import staff_required
+from assessments.forms import AssessmentForm, GradeScaleForm, ScoreForm
+from assessments.models import Assessment, GradeScale, Score
 from assessments.results import class_ranking, class_subject_ranking, student_result
 from classes.models import ClassStream
 from students.models import Student
 
 
+@staff_required
 def assessment_list(request):
     assessments = Assessment.objects.all().order_by("-year", "term", "name")
     return render(request, "assessments/list.html", {"assessments": assessments})
 
 
+@staff_required
 def assessment_detail(request, pk):
     assessment = get_object_or_404(Assessment, pk=pk)
     scores = Score.objects.filter(assessment=assessment).select_related(
@@ -28,6 +31,7 @@ def assessment_detail(request, pk):
     )
 
 
+@staff_required
 def assessment_create(request):
     form = AssessmentForm(request.POST or None)
     if form.is_valid():
@@ -36,6 +40,7 @@ def assessment_create(request):
     return render(request, "assessments/create.html", {"form": form})
 
 
+@staff_required
 def assessment_update(request, pk):
     assessment = get_object_or_404(Assessment, pk=pk)
     form = AssessmentForm(request.POST or None, instance=assessment)
@@ -45,6 +50,7 @@ def assessment_update(request, pk):
     return render(request, "assessments/update.html", {"form": form, "assessment": assessment})
 
 
+@staff_required
 def assessment_delete(request, pk):
     assessment = get_object_or_404(Assessment, pk=pk)
     if request.method == "POST":
@@ -53,6 +59,7 @@ def assessment_delete(request, pk):
     return render(request, "assessments/delete.html", {"assessment": assessment})
 
 
+@staff_required
 def score_list(request):
     scores = Score.objects.select_related("student", "subject", "assessment").order_by(
         "-assessment__year",
@@ -63,6 +70,7 @@ def score_list(request):
     return render(request, "assessments/scores/list.html", {"scores": scores})
 
 
+@staff_required
 def score_detail(request, pk):
     score = get_object_or_404(
         Score.objects.select_related("student", "subject", "assessment"),
@@ -71,6 +79,7 @@ def score_detail(request, pk):
     return render(request, "assessments/scores/detail.html", {"score": score})
 
 
+@staff_required
 def score_create(request):
     form = ScoreForm(request.POST or None)
     if form.is_valid():
@@ -79,6 +88,7 @@ def score_create(request):
     return render(request, "assessments/scores/create.html", {"form": form})
 
 
+@staff_required
 def score_update(request, pk):
     score = get_object_or_404(Score, pk=pk)
     form = ScoreForm(request.POST or None, instance=score)
@@ -88,6 +98,7 @@ def score_update(request, pk):
     return render(request, "assessments/scores/update.html", {"form": form, "score": score})
 
 
+@staff_required
 def score_delete(request, pk):
     score = get_object_or_404(Score, pk=pk)
     if request.method == "POST":
@@ -96,6 +107,7 @@ def score_delete(request, pk):
     return render(request, "assessments/scores/delete.html", {"score": score})
 
 
+@staff_required
 def student_result_view(request, pk):
     student = get_object_or_404(Student.objects.select_related("class_stream"), pk=pk)
     result = student_result(student)
@@ -112,6 +124,7 @@ def student_result_view(request, pk):
     return render(request, "reports/student_report.html", result)
 
 
+@staff_required
 def class_result_view(request, class_id):
     result = class_ranking(class_id)
     class_stream = result["class_stream"]
@@ -127,6 +140,7 @@ def class_result_view(request, class_id):
     )
 
 
+@staff_required
 def class_subject_result_view(request, class_id, subject_id):
     result = class_subject_ranking(class_id, subject_id)
     return render(
@@ -138,3 +152,41 @@ def class_subject_result_view(request, class_id, subject_id):
             "ranking": result["ranking"],
         },
     )
+
+
+@staff_required
+def grade_scale_list(request):
+    grade_scales = GradeScale.objects.all().order_by("min_mark")
+    return render(request, "assessments/grades/list.html", {"grade_scales": grade_scales})
+
+
+@staff_required
+def grade_scale_create(request):
+    form = GradeScaleForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect("grade_scale_list")
+    return render(request, "assessments/grades/create.html", {"form": form})
+
+
+@staff_required
+def grade_scale_update(request, pk):
+    grade_scale = get_object_or_404(GradeScale, pk=pk)
+    form = GradeScaleForm(request.POST or None, instance=grade_scale)
+    if form.is_valid():
+        form.save()
+        return redirect("grade_scale_list")
+    return render(
+        request,
+        "assessments/grades/update.html",
+        {"form": form, "grade_scale": grade_scale},
+    )
+
+
+@staff_required
+def grade_scale_delete(request, pk):
+    grade_scale = get_object_or_404(GradeScale, pk=pk)
+    if request.method == "POST":
+        grade_scale.delete()
+        return redirect("grade_scale_list")
+    return render(request, "assessments/grades/delete.html", {"grade_scale": grade_scale})

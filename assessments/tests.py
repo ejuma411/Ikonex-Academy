@@ -1,6 +1,8 @@
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.urls import reverse
 
 from assessments.forms import ScoreForm
 from assessments.models import Assessment, GradeScale, Score
@@ -24,10 +26,6 @@ class AssessmentResultsTests(TestCase):
             term="1",
             year=2026,
         )
-
-        GradeScale.objects.create(grade="A", min_mark=80, max_mark=100)
-        GradeScale.objects.create(grade="B", min_mark=60, max_mark=79)
-        GradeScale.objects.create(grade="C", min_mark=0, max_mark=59)
 
         self.student_1 = Student.objects.create(
             admission_no="A001",
@@ -109,3 +107,27 @@ class AssessmentResultsTests(TestCase):
         self.assertEqual(ranking[0]["position"], 1)
         self.assertEqual(ranking[1]["student"], self.student_2)
         self.assertEqual(ranking[1]["position"], 2)
+
+
+class GradeScaleViewTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="STAFF002",
+            password="secret12345",
+            is_staff=True,
+        )
+        self.client.force_login(self.user)
+
+    def test_grade_scale_list_is_protected_and_accessible_to_staff(self):
+        response = self.client.get(reverse("grade_scale_list"), secure=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Grading Scales")
+
+    def test_grade_scale_create_uses_required_grade_field(self):
+        response = self.client.post(
+            reverse("grade_scale_create"),
+            {"grade": "", "min_mark": 0, "max_mark": 10},
+            secure=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "This field is required.")

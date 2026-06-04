@@ -3,11 +3,13 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
+from accounts.decorators import staff_required
 from assessments.results import class_ranking, student_result
 from classes.models import ClassStream
 from students.models import Student
 
 
+@staff_required
 def result_list(request):
     class_streams = ClassStream.objects.all().order_by("name")
     students = Student.objects.select_related("class_stream").order_by(
@@ -28,6 +30,7 @@ def result_list(request):
     )
 
 
+@staff_required
 def report_list(request):
     class_streams = ClassStream.objects.all().order_by("name")
     students = Student.objects.select_related("class_stream").order_by(
@@ -86,6 +89,7 @@ def _styles():
     return styles
 
 
+@staff_required
 def student_report_pdf(request, pk):
     from reportlab.lib import colors
     from reportlab.lib.units import mm
@@ -148,6 +152,7 @@ def student_report_pdf(request, pk):
     return response
 
 
+@staff_required
 def class_report_pdf(request, class_id):
     from reportlab.lib import colors
     from reportlab.lib.units import mm

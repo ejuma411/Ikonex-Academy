@@ -1,5 +1,4 @@
 # Ikonex Academy Student Management System
-
 A Django-based Student Management System for Ikonex Academy. The project supports class stream management, student registration, subject assignment, score entry, grading, ranking, and printable PDF report cards.
 
 ## Features
@@ -27,6 +26,10 @@ A Django-based Student Management System for Ikonex Academy. The project support
   - View student performance summaries in the browser
   - Download individual student PDF report cards
   - Download class performance PDF reports
+- Authentication and access control
+  - Staff login using `staff_no` and password
+  - Protected dashboards and CRUD screens
+  - Account access controlled through Django staff/admin flags
 
 ## Tech Stack
 
@@ -68,6 +71,12 @@ env\Scripts\activate
 pip install -r requirements.txt
 ```
 
+### 2a. Create your local environment file
+
+Copy `.env.example` to `.env` and update the values for your machine.
+
+Do not commit `.env` to git. It is already ignored.
+
 ### 3. Apply migrations
 
 ```bash
@@ -81,6 +90,8 @@ This project seeds default grading bands during migration, so grades work immedi
 ```bash
 python manage.py createsuperuser
 ```
+
+The admin username acts as the `staff_no` used on the login screen.
 
 ### 5. Run the development server
 
@@ -155,7 +166,15 @@ Before deploying to production:
 - Set `DEBUG = False`
 - Set a secure `SECRET_KEY`
 - Configure `ALLOWED_HOSTS`
-- Replace SQLite with PostgreSQL or MySQL
+- Set `DATABASE_URL` for PostgreSQL deployments, or `DATABASE_NAME` for local SQLite overrides
+- Set `CSRF_TRUSTED_ORIGINS` for your production domain
+- If you are using ngrok, make sure the tunnel domain is trusted by Django. The app is preconfigured for common ngrok domains, including `ngrok-free.dev`, but you can also set:
+
+```bash
+export ALLOWED_HOSTS=127.0.0.1,localhost,testserver,.ngrok-free.app,.ngrok-free.dev,.ngrok.io,.ngrok.app
+export CSRF_TRUSTED_ORIGINS=https://*.ngrok-free.app,https://*.ngrok-free.dev,https://*.ngrok.io,https://*.ngrok.app
+```
+
 - Collect static files:
 
 ```bash
@@ -163,6 +182,34 @@ python manage.py collectstatic
 ```
 
 - Use a production WSGI server such as Gunicorn or a platform like Railway, VPS, or Render
+
+## Using ngrok
+
+To expose the local app to the internet during development:
+
+1. Start Django on your machine:
+
+```bash
+python manage.py runserver 8000
+```
+
+2. In a second terminal, start ngrok:
+
+```bash
+ngrok http 8000
+```
+
+3. Open the HTTPS forwarding URL shown by ngrok, for example:
+
+```text
+https://inbred-silverly-christeen.ngrok-free.dev
+```
+
+### Tips
+
+- Keep `DEBUG=True` only for local development and temporary public demos.
+- Because ngrok terminates HTTPS, Django should trust forwarded proto headers. This project already sets `SECURE_PROXY_SSL_HEADER` and `USE_X_FORWARDED_HOST`.
+- If your ngrok URL changes, update `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` through environment variables if needed.
 
 ## Design Notes
 
@@ -175,6 +222,8 @@ python manage.py collectstatic
 
 - This repository is meant for demonstration and interview review.
 - If you need sample data, create it through the admin panel or the app forms.
+- Staff users must be created in Django admin or via `createsuperuser`, and they should log in with their `staff_no` value.
+- The app reads `.env` automatically if it exists in the project root.
 
 ## License
 

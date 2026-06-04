@@ -22,7 +22,15 @@
         </div>
     </div>
 
-    <div class="navbar-user d-none d-sm-inline-flex">
-        <span class="navbar-user-label">Admin User</span>
+    <div class="navbar-user d-none d-sm-inline-flex align-items-center gap-3">
+        <span class="navbar-user-label">
+            {{ request.user.username }}
+            {% if request.user.is_superuser %}
+                <small class="text-muted ms-1">(Admin)</small>
+            {% else %}
+                <small class="text-muted ms-1">(Staff)</small>
+            {% endif %}
+        </span>
+        <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-secondary">Logout</a>
     </div>
 </nav>

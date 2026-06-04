@@ -20,4 +20,8 @@ urlpatterns = [
         views.class_subject_result_view,
         name='class_subject_result',
     ),
+    path('grades/', views.grade_scale_list, name='grade_scale_list'),
+    path('grades/create/', views.grade_scale_create, name='grade_scale_create'),
+    path('grades/<int:pk>/update/', views.grade_scale_update, name='grade_scale_update'),
+    path('grades/<int:pk>/delete/', views.grade_scale_delete, name='grade_scale_delete'),
 ]

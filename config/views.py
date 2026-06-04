@@ -3,8 +3,10 @@ from students.models import Student
 from classes.models import ClassStream
 from subjects.models import Subject
 from assessments.models import Assessment
+from accounts.decorators import staff_required
 
 
+@staff_required
 def dashboard(request):
     context = {
         "students_count": Student.objects.count(),

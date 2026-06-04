@@ -1,0 +1,114 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Staff Login | Ikonex Academy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{% static 'images/ikonex.png' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="auth-body">
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <div class="brand-logo-card auth-logo-card">
+                    <img src="{% static 'images/ikonex.png' %}" alt="Ikonex Academy logo" class="brand-logo">
+                </div>
+                <h1>Ikonex Academy</h1>
+                <p>Student Management System</p>
+            </div>
+
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'danger' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="id_staff_no" class="form-label">Staff No</label>
+                    <input
+                        type="text"
+                        name="staff_no"
+                        id="id_staff_no"
+                        class="form-control"
+                        placeholder="Enter your staff number"
+                        required
+                        value="{{ form.staff_no.value|default:'' }}"
+                    >
+                    {% if form.staff_no.errors %}
+                        <div class="text-danger small mt-1">{{ form.staff_no.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_password" class="form-label">Password</label>
+                    <div class="position-relative">
+                        <input
+                            type="password"
+                            name="password"
+                            id="id_password"
+                            class="form-control auth-password-input"
+                            placeholder="Enter your password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            class="auth-password-toggle"
+                            id="passwordToggle"
+                            aria-label="Show password"
+                            aria-pressed="false"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+
+                <a
+                    href="mailto:info@ikonexsystems.com?subject=Login%20Problem%20-%20Ikonex%20Academy&body=Hello%20support%2C%20I%20am%20having%20trouble%20logging%20into%20the%20Ikonex%20Academy%20Student%20Management%20System."
+                    class="btn btn-outline-secondary w-100 mt-3"
+                >
+                    Report login problem
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const toggle = document.getElementById("passwordToggle");
+            const input = document.getElementById("id_password");
+            if (!toggle || !input) {
+                return;
+            }
+
+            toggle.addEventListener("click", function () {
+                const isHidden = input.getAttribute("type") === "password";
+                input.setAttribute("type", isHidden ? "text" : "password");
+                toggle.setAttribute("aria-pressed", String(isHidden));
+                toggle.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+                toggle.querySelector("i").className = isHidden ? "bi bi-eye-slash" : "bi bi-eye";
+            });
+        })();
+    </script>
+</body>
+</html>

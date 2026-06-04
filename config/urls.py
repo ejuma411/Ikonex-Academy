@@ -21,6 +21,7 @@ from config import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("accounts.urls")),
     path('', views.dashboard, name='dashboard'),
     path('classes/', include('classes.urls')),
     path('students/', include('students.urls')),

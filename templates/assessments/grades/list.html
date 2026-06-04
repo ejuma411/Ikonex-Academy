@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h3>Grading Scales</h3>
+        <p class="text-muted mb-0">Configure the mark ranges used across reports and rankings.</p>
+    </div>
+    <a href="{% url 'grade_scale_create' %}" class="btn btn-primary">Add Grade Scale</a>
+</div>
+
+<table class="table table-bordered mt-4">
+    <tr>
+        <th>Grade</th>
+        <th>Min Mark</th>
+        <th>Max Mark</th>
+        <th>Actions</th>
+    </tr>
+    {% for grade_scale in grade_scales %}
+    <tr>
+        <td>{{ grade_scale.grade }}</td>
+        <td>{{ grade_scale.min_mark }}</td>
+        <td>{{ grade_scale.max_mark }}</td>
+        <td>
+            <a href="{% url 'grade_scale_update' grade_scale.id %}">Edit</a> |
+            <a href="{% url 'grade_scale_delete' grade_scale.id %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4" class="text-center text-muted">No grading scales configured yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

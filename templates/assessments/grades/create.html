@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h3>Add Grade Scale</h3>
+
+{% if form.non_field_errors %}
+<div class="alert alert-danger">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
+
+<form method="post" class="row g-3 mt-1">
+    {% csrf_token %}
+    <div class="col-md-4">
+        <label class="form-label">Grade</label>
+        {{ form.grade }}
+        {% if form.grade.errors %}<div class="text-danger small mt-1">{{ form.grade.errors|striptags }}</div>{% endif %}
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Min Mark</label>
+        {{ form.min_mark }}
+        {% if form.min_mark.errors %}<div class="text-danger small mt-1">{{ form.min_mark.errors|striptags }}</div>{% endif %}
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Max Mark</label>
+        {{ form.max_mark }}
+        {% if form.max_mark.errors %}<div class="text-danger small mt-1">{{ form.max_mark.errors|striptags }}</div>{% endif %}
+    </div>
+    <div class="col-12">
+        <button class="btn btn-success">Save</button>
+        <a href="{% url 'grade_scale_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+{% endblock %}
