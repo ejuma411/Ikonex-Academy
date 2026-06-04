@@ -1,0 +1,20 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h3>Edit Score</h3>
+
+{% if form.non_field_errors %}
+<div class="alert alert-danger">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-success">Update</button>
+    <a href="{% url 'score_list' %}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+{% endblock %}

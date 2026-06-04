@@ -1,0 +1,34 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h3>{{ class_stream.name }}</h3>
+
+<hr>
+
+<div class="d-flex gap-2 mb-3">
+    <a href="{% url 'class_result' class_stream.id %}" class="btn btn-primary btn-sm">View Results</a>
+    <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn btn-outline-primary btn-sm">Download PDF</a>
+</div>
+
+<h5>Subjects in this class</h5>
+
+<ul>
+    {% for assignment in subjects %}
+        <li>{{ assignment.subject.name }}</li>
+    {% empty %}
+        <li>No subjects assigned yet</li>
+    {% endfor %}
+</ul>
+
+<h5>Students in this class</h5>
+
+<ul>
+    {% for student in students %}
+        <li>{{ student.first_name }} {{ student.last_name }}</li>
+    {% empty %}
+        <li>No students yet</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

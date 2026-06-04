@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-start">
+    <div>
+        <h3>{{ assessment.name }}</h3>
+        <p class="mb-1"><strong>Term:</strong> {{ assessment.term|default:"-" }}</p>
+        <p class="mb-1"><strong>Year:</strong> {{ assessment.year }}</p>
+        <p class="mb-1"><strong>Total Marks:</strong> {{ assessment.total_marks }}</p>
+    </div>
+    <a href="{% url 'assessment_update' assessment.id %}" class="btn btn-outline-primary">Edit</a>
+</div>
+
+<hr>
+
+<h5>Scores</h5>
+<table class="table table-bordered">
+    <tr>
+        <th>Student</th>
+        <th>Subject</th>
+        <th>Marks</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for score in scores %}
+    <tr>
+        <td>{{ score.student.first_name }} {{ score.student.last_name }}</td>
+        <td>{{ score.subject.name }}</td>
+        <td>{{ score.marks }}</td>
+        <td>
+            <a href="{% url 'score_detail' score.id %}">View</a> |
+            <a href="{% url 'score_update' score.id %}">Edit</a> |
+            <a href="{% url 'score_delete' score.id %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4" class="text-center text-muted">No scores recorded for this assessment.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

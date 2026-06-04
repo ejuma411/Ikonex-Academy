@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between">
+    <h3>Assessments</h3>
+    <a href="{% url 'assessment_create' %}" class="btn btn-primary">Add Assessment</a>
+</div>
+
+<table class="table table-bordered mt-3">
+    <tr>
+        <th>Name</th>
+        <th>Term</th>
+        <th>Year</th>
+        <th>Total Marks</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for a in assessments %}
+    <tr>
+        <td>{{ a.name }}</td>
+        <td>{{ a.term|default:"-" }}</td>
+        <td>{{ a.year }}</td>
+        <td>{{ a.total_marks }}</td>
+        <td>
+            <a href="{% url 'assessment_detail' a.id %}">View</a> |
+            <a href="{% url 'assessment_update' a.id %}">Edit</a> |
+            <a href="{% url 'assessment_delete' a.id %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5" class="text-center text-muted">No assessments yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

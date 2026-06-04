@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h3>{{ student.first_name }} {{ student.last_name }}</h3>
+
+<hr>
+
+<p><strong>Admission No:</strong> {{ student.admission_no }}</p>
+<p><strong>Class:</strong> {{ student.class_stream.name }}</p>
+
+{% endblock %}

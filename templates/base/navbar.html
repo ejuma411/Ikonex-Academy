@@ -1,0 +1,28 @@
+{% load static %}
+
+<nav class="navbar app-navbar px-4">
+    <div class="d-flex align-items-center gap-3 flex-grow-1">
+        <button
+            class="btn btn-light app-sidebar-toggle d-md-none"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#mobileSidebar"
+            aria-controls="mobileSidebar"
+            aria-label="Open navigation"
+        >
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div class="navbar-logo-card">
+            <img src="{% static 'images/ikonex.png' %}" alt="Ikonex Academy logo" class="navbar-logo">
+        </div>
+        <div class="app-navbar-copy">
+            <span class="navbar-brand app-navbar-brand mb-0">Student Management System</span>
+            <div class="navbar-subtitle">Ikonex Academy</div>
+        </div>
+    </div>
+
+    <div class="navbar-user d-none d-sm-inline-flex">
+        <span class="navbar-user-label">Admin User</span>
+    </div>
+</nav>

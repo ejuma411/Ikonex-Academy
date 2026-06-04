@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <h3>Subjects</h3>
+    <div>
+        <a href="{% url 'subject_create' %}" class="btn btn-primary">Add Subject</a>
+        <a href="{% url 'assign_subject' %}" class="btn btn-success">Assign Subject</a>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for s in subjects %}
+    <tr>
+        <td>{{ s.code }}</td>
+        <td>{{ s.name }}</td>
+        <td>
+            <a href="{% url 'subject_detail' s.id %}">View</a> |
+            <a href="{% url 'subject_update' s.id %}">Edit</a> |
+            <a href="{% url 'subject_delete' s.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

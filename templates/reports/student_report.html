@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-start">
+    <div>
+        <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+        <p class="mb-1"><strong>Admission No:</strong> {{ student.admission_no }}</p>
+        <p class="mb-1"><strong>Class:</strong> {{ student.class_stream.name }}</p>
+        <p class="mb-1"><strong>Total:</strong> {{ total }}</p>
+        <p class="mb-1"><strong>Average:</strong> {{ average }}</p>
+        <p class="mb-1"><strong>Grade:</strong> {{ grade }}</p>
+        <p class="mb-1"><strong>Class Position:</strong> {{ class_position }} of {{ class_size }}</p>
+    </div>
+    <div class="text-end">
+        <a href="{% url 'student_report_pdf' student.id %}" class="btn btn-primary">Download PDF</a>
+    </div>
+</div>
+
+<h5 class="mt-4">Subject Summary</h5>
+<table class="table table-bordered mt-3">
+    <tr>
+        <th>Subject</th>
+        <th>Total</th>
+        <th>Average</th>
+        <th>Grade</th>
+    </tr>
+
+    {% for s in subject_summary %}
+    <tr>
+        <td>{{ s.subject_name }}</td>
+        <td>{{ s.total }}</td>
+        <td>{{ s.average }}</td>
+        <td>{{ s.grade }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4" class="text-center text-muted">No scores recorded yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h5 class="mt-4">Assessment Scores</h5>
+<table class="table table-bordered">
+    <tr>
+        <th>Assessment</th>
+        <th>Subject</th>
+        <th>Marks</th>
+    </tr>
+    {% for s in scores %}
+    <tr>
+        <td>{{ s.assessment.name }}</td>
+        <td>{{ s.subject.name }}</td>
+        <td>{{ s.marks }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3" class="text-center text-muted">No assessments recorded yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

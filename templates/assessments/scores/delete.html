@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h3>Delete Score</h3>
+
+<p>Are you sure you want to delete the score for <strong>{{ score.student.first_name }} {{ score.student.last_name }}</strong> in <strong>{{ score.subject.name }}</strong>?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger">Yes, delete</button>
+    <a href="{% url 'score_list' %}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+{% endblock %}

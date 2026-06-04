@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h3>{{ subject.name }}</h3>
+
+<p><strong>Code:</strong> {{ subject.code }}</p>
+
+<h5 class="mt-4">Assigned Class Streams</h5>
+<ul>
+    {% for assignment in assignments %}
+        <li>
+            {{ assignment.class_stream.name }}
+            <a href="{% url 'class_subject_result' assignment.class_stream.id subject.id %}" class="ms-2">View performance</a>
+        </li>
+    {% empty %}
+        <li>No class streams assigned yet</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

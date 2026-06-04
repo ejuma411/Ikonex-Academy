@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h3>{{ student.first_name }} {{ student.last_name }}</h3>
+
+<hr>
+
+<p><strong>Admission No:</strong> {{ student.admission_no }}</p>
+<p><strong>Class:</strong> {{ student.class_stream.name }}</p>
+
+<div class="d-flex gap-2 mb-3">
+    <a href="{% url 'student_result' student.id %}" class="btn btn-primary btn-sm">View Result</a>
+    <a href="{% url 'student_report_pdf' student.id %}" class="btn btn-outline-primary btn-sm">Download PDF</a>
+</div>
+
+{% endblock %}
