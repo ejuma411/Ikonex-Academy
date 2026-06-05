@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.utils import timezone
 from io import BytesIO
 from django.template.loader import get_template
-from xhtml2pdf import pisa
 import os
 from django.conf import settings
 

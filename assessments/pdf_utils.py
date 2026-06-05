@@ -1,36 +1,33 @@
 from io import BytesIO
 from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib import colors
 from django.conf import settings
 import os
 
 
 def render_to_pdf(template_src, context_dict={}):
-    """Convert HTML template to PDF"""
-    template = get_template(template_src)
-    html = template.render(context_dict)
-    result = BytesIO()
+    """
+    Convert data to PDF using ReportLab
+    Note: This is a placeholder. Use ProfessionalReportPDF class instead.
+    """
+    # This is just a placeholder - use ProfessionalReportPDF for actual PDF generation
+    from .pdf_generator import ProfessionalReportPDF
     
-    # Configure xhtml2pdf
-    pdf = pisa.pisaDocument(
-        BytesIO(html.encode("UTF-8")), 
-        result,
-        encoding='UTF-8',
-        link_callback=link_callback
-    )
-    
-    if not pdf.err:
-        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    # You would need to extract data from context_dict and pass to ProfessionalReportPDF
+    # For now, return None as we're using the dedicated PDF generator
     return None
 
 
 def link_callback(uri, rel):
-    """Handle static files in PDF"""
+    """Handle static files in PDF (for potential future use)"""
     if uri.startswith('http'):
         return uri
     
-    # Handle static files
     if uri.startswith('/static/'):
         path = os.path.join(settings.STATIC_ROOT, uri.replace('/static/', ''))
         if os.path.exists(path):
