@@ -27,3 +27,18 @@ def refresh_session(request):
     """Reset session timer"""
     request.session['last_activity'] = datetime.now().timestamp()
     return JsonResponse({'status': 'ok'})
+
+from django.http import JsonResponse
+from django.shortcuts import render
+
+
+def health_check(request):
+    return JsonResponse({
+        'status': 'ok',
+        'message': 'Ikonex Academy API is running',
+        'environment': 'production'
+    })
+
+
+def home_view(request):
+    return render(request, 'base/base.html')
