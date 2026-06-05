@@ -1,14 +1,24 @@
 {% load static %}
 
-<aside class="sidebar-shell">
+<div class="sidebar-shell">
+
+    <!-- Brand -->
     <div class="brand-panel">
         <div class="brand-logo-card">
             <img src="{% static 'images/ikonex.png' %}" alt="Ikonex Academy logo" class="brand-logo">
         </div>
+        <div>
+            <div class="sidebar-brand-text">Ikonex Academy</div>
+        </div>
     </div>
 
-    
-    <div class="sidebar-divider"></div>
-
+    <!-- Nav Links -->
     {% include 'base/sidebar_links.html' %}
-</aside>
+
+    <!-- Spacer -->
+    <div style="flex:1"></div>
+
+    <!-- Version -->
+    <div class="sidebar-version">v1.0 &nbsp;·&nbsp; Ikonex Academy</div>
+
+</div>

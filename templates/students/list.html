@@ -1,32 +1,62 @@
 {% extends 'base/base.html' %}
 
+{% block title %}Students | Ikonex Academy{% endblock %}
+
 {% block content %}
 
-<div class="d-flex justify-content-between mb-3">
-    <h3>Students</h3>
-    <a href="{% url 'student_create' %}" class="btn btn-primary">Add Student</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Students</h1>
+        <p class="page-subtitle">Manage enrolled students across all class streams.</p>
+    </div>
+    <a href="{% url 'student_create' %}" class="btn btn-primary">
+        <i class="bi bi-person-plus me-1"></i> Add Student
+    </a>
 </div>
 
-<table class="table table-bordered">
-    <tr>
-        <th>Admission No</th>
-        <th>Name</th>
-        <th>Class</th>
-        <th>Actions</th>
-    </tr>
-
-    {% for s in students %}
-    <tr>
-        <td>{{ s.admission_no }}</td>
-        <td>{{ s.first_name }} {{ s.last_name }}</td>
-        <td>{{ s.class_stream.name }}</td>
-        <td>
-            <a href="{% url 'student_detail' s.id %}">View</a> |
-            <a href="{% url 'student_update' s.id %}">Edit</a> |
-            <a href="{% url 'student_delete' s.id %}">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="app-table-wrap">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Admission No</th>
+                <th>Full Name</th>
+                <th>Class Stream</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td><span class="fw-600 text-brand">{{ s.admission_no }}</span></td>
+                <td>{{ s.first_name }} {{ s.last_name }}</td>
+                <td><span class="badge bg-light text-dark border">{{ s.class_stream.name }}</span></td>
+                <td>
+                    <div class="tbl-actions">
+                        <a href="{% url 'student_detail' s.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                        <a href="{% url 'student_update' s.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'student_delete' s.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">
+                    <div class="empty-state">
+                        <i class="bi bi-people"></i>
+                        <p>No students registered yet.</p>
+                        <a href="{% url 'student_create' %}" class="btn btn-primary btn-sm mt-2">Add First Student</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

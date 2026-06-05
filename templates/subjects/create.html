@@ -1,14 +1,204 @@
 {% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Add Subject | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<h3>Add Subject</h3>
+<style>
+    /* Professional styling for Add Subject page */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: #1e293b;
+        letter-spacing: -0.02em;
+    }
+    
+    .page-subtitle {
+        color: #64748b;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+    
+    /* Form Card */
+    .form-card {
+        background: #ffffff;
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 25px -5px rgba(0,0,0,0.05);
+        padding: 2rem;
+        max-width: 680px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Form field styling */
+    .form-card form p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-card label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+        font-size: 0.875rem;
+    }
+    
+    .form-card input, 
+    .form-card select, 
+    .form-card textarea {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        background: #fff;
+    }
+    
+    .form-card input:focus, 
+    .form-card select:focus, 
+    .form-card textarea:focus {
+        outline: none;
+        border-color: #0f766e;
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+    }
+    
+    /* Help text styling */
+    .form-card .helptext {
+        display: block;
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+    }
+    
+    /* Error messages */
+    .form-card .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.25rem 0 0 0;
+        font-size: 0.75rem;
+        color: #dc2626;
+    }
+    
+    /* Subject-specific styles */
+    .subject-code-hint {
+        font-family: monospace;
+        background: #f1f5f9;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        font-size: 0.875rem;
+    }
+    
+    .btn-primary {
+        background: #0f766e;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #0b5e58;
+        transform: translateY(-1px);
+    }
+    
+    .btn-outline-secondary {
+        background: transparent;
+        border: 1px solid #cbd5e1;
+        color: #475569;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .form-card {
+            padding: 1.25rem;
+        }
+        
+        .page-title {
+            font-size: 1.4rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+        }
+    }
+</style>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+<div class="container-fluid px-3 px-md-4">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Add Subject</h1>
+            <p class="page-subtitle">Add a new subject to the curriculum.</p>
+        </div>
+        <a href="{% url 'subject_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
 
-    <button class="btn btn-success">Save</button>
-</form>
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group mb-4">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="text-danger">*</span>
+                        {% endif %}
+                    </label>
+                    
+                    {{ field }}
+                    
+                    {% if field.help_text %}
+                        <small class="helptext">{{ field.help_text }}</small>
+                    {% endif %}
+                    
+                    {% if field.errors %}
+                        <div class="errorlist">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i> Save Subject
+                </button>
+                <a href="{% url 'subject_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

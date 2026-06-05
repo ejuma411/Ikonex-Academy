@@ -22,6 +22,9 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# Custom user model
+AUTH_USER_MODEL = 'accounts.User'
+
 def _split_env_list(value):
     return [item.strip() for item in value.split(",") if item.strip()]
 
@@ -61,6 +64,7 @@ ALLOWED_HOSTS = _split_env_list(os.getenv("ALLOWED_HOSTS", DEFAULT_ALLOWED_HOSTS
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -84,6 +88,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "config.middleware.SessionIdleTimeoutMiddleware", 
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -110,27 +115,20 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-database_url = os.getenv("DATABASE_URL")
-if database_url:
-    parsed = urlparse(database_url)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT'),
-        }
-}
-
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.getenv("DATABASE_NAME", BASE_DIR / "db.sqlite3"),
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'ikon_system'),
+        'USER': os.getenv('DB_USER', 'ikonex_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET storage_engine=INNODB",
+        },
     }
+}
 
 
 # Password validation
@@ -209,3 +207,200 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ========== SESSION SECURITY SETTINGS ==========
+
+# Session timeout (5 minutes)
+SESSION_COOKIE_AGE = 300  # seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
+
+# Secure session cookie settings
+SESSION_COOKIE_HTTPONLY = True  # Prevents JavaScript access
+SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+
+# Additional security for production
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True  # Only send over HTTPS
+    SESSION_COOKIE_SAMESITE = 'Strict'  # More strict for production
+
+# Optional: Clear session data on logout
+SESSION_CLEAR_ON_LOGOUT = True
+
+JAZZMIN_SETTINGS = {
+    # Title on the navbar
+    "site_title": "Ikonex Academy",
+    
+    # Title on the brand (top left)
+    "site_header": "Ikonex Academy",
+    
+    # Welcome text
+    "welcome_sign": "Welcome to Ikonex Academy Management System",
+    
+    # Copyright footer
+    "copyright": "Ikonex Academy",
+    
+    # Logo to use for your site (can be a path to an image)
+    "site_logo": "images/ikonex.png",
+    
+    # Logo in login form (if different)
+    "login_logo": "images/ikonex.png",
+    
+    # Custom CSS
+    "custom_css": None,
+    
+    # Custom JS
+    "custom_js": None,
+    
+    # Whether to show the UI customizer on the sidebar
+    "show_ui_builder": False,
+    
+    # Which model to show on the admin index
+    "show_navbar": True,
+    
+    # Change the order of the apps
+    "order_with_respect_to": [
+        "accounts",
+        "classes",
+        "students",
+        "subjects",
+        "assessments",
+        "reports",
+    ],
+    
+    # Icons for each model (uses FontAwesome 5)
+    "icons": {
+        # Authentication
+        "auth.User": "fas fa-users",
+        "auth.Group": "fas fa-users-cog",
+        
+        # Classes
+        "classes.ClassStream": "fas fa-building",
+        
+        # Students
+        "students.Student": "fas fa-user-graduate",
+        
+        # Subjects
+        "subjects.Subject": "fas fa-book",
+        "subjects.ClassSubject": "fas fa-diagram-project",
+        
+        # Assessments
+        "assessments.Assessment": "fas fa-pencil-alt",
+        "assessments.Score": "fas fa-chart-line",
+        "assessments.GradeScale": "fas fa-percent",
+        
+        # Reports
+        "reports.Report": "fas fa-file-alt",
+    },
+    
+    # Icons for each app
+    "app_icons": {
+        "accounts": "fas fa-user-shield",
+        "classes": "fas fa-school",
+        "students": "fas fa-users",
+        "subjects": "fas fa-book-open",
+        "assessments": "fas fa-tasks",
+        "reports": "fas fa-chart-bar",
+        "auth": "fas fa-lock",
+    },
+    
+    # Default theme
+    # "theme": "darkly",  # Options: default, darkly, flatly, etc.
+    
+    # Change the list filter (use default)
+    "list_filter": ["sticky"],
+    
+    # Change the search fields
+    "search_model": ["auth.User", "students.Student", "classes.ClassStream"],
+    
+    # Which model to use as the default for the admin index
+    "default_model": None,
+    
+    # Which model to show on the right sidebar
+    "show_sidebar": True,
+    
+    # Navigation sidebar
+    "navigation": [
+        {
+            "name": "Core Management",
+            "icon": "fas fa-home",
+            "models": [
+                {"name": "Dashboard", "url": "/admin/", "icon": "fas fa-tachometer-alt"},
+            ]
+        },
+        {
+            "name": "Student Management",
+            "icon": "fas fa-users",
+            "models": [
+                {"name": "Students", "url": "/admin/students/student/", "icon": "fas fa-user-graduate"},
+                {"name": "Class Streams", "url": "/admin/classes/classstream/", "icon": "fas fa-building"},
+            ]
+        },
+        {
+            "name": "Academic",
+            "icon": "fas fa-book",
+            "models": [
+                {"name": "Subjects", "url": "/admin/subjects/subject/", "icon": "fas fa-book"},
+                {"name": "Class Subjects", "url": "/admin/subjects/classsubject/", "icon": "fas fa-diagram-project"},
+            ]
+        },
+        {
+            "name": "Assessment",
+            "icon": "fas fa-tasks",
+            "models": [
+                {"name": "Assessments", "url": "/admin/assessments/assessment/", "icon": "fas fa-pencil-alt"},
+                {"name": "Scores", "url": "/admin/assessments/score/", "icon": "fas fa-chart-line"},
+                {"name": "Grade Scales", "url": "/admin/assessments/gradescale/", "icon": "fas fa-percent"},
+            ]
+        },
+        {
+            "name": "Reports",
+            "icon": "fas fa-chart-bar",
+            "models": [
+                {"name": "Class Reports", "url": "/reports/", "icon": "fas fa-file-alt"},
+                {"name": "Student Reports", "url": "/reports/students/", "icon": "fas fa-file-pdf"},
+            ]
+        },
+        {
+            "name": "Security",
+            "icon": "fas fa-shield-alt",
+            "models": [
+                {"name": "Users", "url": "/admin/auth/user/", "icon": "fas fa-user"},
+                {"name": "Groups", "url": "/admin/auth/group/", "icon": "fas fa-users-cog"},
+            ]
+        },
+    ],
+}
+
+# Optional: Jazzmin UI tweaks
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-teal",
+    "accent": "accent-teal",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-teal",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
+}

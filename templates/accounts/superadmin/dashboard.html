@@ -1,0 +1,194 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Superadmin Dashboard | Ikonex Academy{% endblock %}
+
+{% block content %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid #e2e8f0;
+        transition: transform 0.2s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #0f766e;
+    }
+    
+    .stat-label {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .action-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.2s;
+    }
+    
+    .action-card:hover {
+        background: #0f766e;
+        color: white;
+    }
+    
+    .action-card:hover a {
+        color: white;
+    }
+    
+    .action-card a {
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+    }
+    
+    .section-card {
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .section-header {
+        background: #f8fafc;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        font-weight: 600;
+    }
+    
+    .section-body {
+        padding: 1rem 1.5rem;
+    }
+    
+    .user-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .user-list li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+    
+    .badge-teacher { background: #dbeafe; color: #1e40af; }
+    .badge-staff { background: #fef3c7; color: #92400e; }
+    .badge-superadmin { background: #dcfce7; color: #15803d; }
+</style>
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Superadmin Dashboard</h1>
+    <p class="text-muted">Complete user and assignment management for school administration</p>
+    
+    <!-- Quick Actions -->
+    <div class="action-grid">
+        <div class="action-card">
+            <a href="{% url 'user_create' %}">
+                <i class="bi bi-person-plus fs-4"></i><br>
+                Create New User
+            </a>
+        </div>
+        <div class="action-card">
+            <a href="{% url 'user_list' %}">
+                <i class="bi bi-people fs-4"></i><br>
+                Manage Users
+            </a>
+        </div>
+        <div class="action-card">
+            <a href="{% url 'assign_class_teacher' %}">
+                <i class="bi bi-building fs-4"></i><br>
+                Assign Class Teacher
+            </a>
+        </div>
+        <div class="action-card">
+            <a href="{% url 'assign_subject_teacher' %}">
+                <i class="bi bi-book fs-4"></i><br>
+                Assign Subject Teacher
+            </a>
+        </div>
+    </div>
+    
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_teachers }}</div>
+            <div class="stat-label">Teachers</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_staff }}</div>
+            <div class="stat-label">Staff Members</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_classes }}</div>
+            <div class="stat-label">Class Streams</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_class_assignments }}</div>
+            <div class="stat-label">Class Teacher Assignments</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_subject_assignments }}</div>
+            <div class="stat-label">Subject Assignments</div>
+        </div>
+    </div>
+    
+    <!-- Recent Users -->
+    <div class="section-card">
+        <div class="section-header">
+            <i class="bi bi-people me-2"></i> Recently Added Users
+        </div>
+        <div class="section-body">
+            <ul class="user-list">
+                {% for user in recent_users %}
+                <li>
+                    <div>
+                        <strong>{{ user.get_full_name }}</strong><br>
+                        <small class="text-muted">{{ user.username }} | {{ user.get_role_display }}</small>
+                    </div>
+                    <a href="{% url 'user_detail' user.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                </li>
+                {% empty %}
+                <li>No users found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

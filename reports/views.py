@@ -38,6 +38,11 @@ def report_list(request):
         "last_name",
         "first_name",
     )
+    
+    # Annotate student count for each class
+    from django.db.models import Count
+    class_streams = class_streams.annotate(student_count=Count('students'))
+    
     return render(
         request,
         "reports/index.html",
@@ -45,8 +50,10 @@ def report_list(request):
             "title": "Reports",
             "class_streams": class_streams,
             "students": students,
-            "student_report_name": "student_report_pdf",
-            "class_report_name": "class_report_pdf",
+            "student_report_name": "student_report_pdf",  # For PDF download
+            "class_report_name": "class_report_pdf",      # For PDF download
+            "student_preview_name": "student_result_view",  # For HTML preview
+            "class_preview_name": "class_result_view",      # For HTML preview
         },
     )
 

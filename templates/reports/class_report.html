@@ -1,52 +1,392 @@
 {% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Class Performance Report | {{ class_stream.name }} | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-start">
-    <div>
-        <h2>Class Performance Report</h2>
-        <p class="mb-1"><strong>Class:</strong> {{ class_stream.name }}</p>
-    </div>
-    <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn btn-primary">Download PDF</a>
-</div>
+<style>
+    /* Professional styling for Class Performance Report */
+    .page-header {
+        display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: #1e293b;
+        letter-spacing: -0.02em;
+    }
+    
+    .class-badge {
+        display: inline-block;
+        background: #f1f5f9;
+        padding: 0.3rem 0.8rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #1e293b;
+        margin-top: 0.5rem;
+    }
+    
+    .class-badge i {
+        color: #0f766e;
+        margin-right: 0.25rem;
+    }
+    
+    /* Stats Cards */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: #ffffff;
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.2;
+    }
+    
+    .stat-unit {
+        font-size: 0.8rem;
+        font-weight: normal;
+        color: #64748b;
+    }
+    
+    /* Section headers */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: #0f766e;
+    }
+    
+    /* Subject filter buttons */
+    .subject-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .subject-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #475569;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .subject-btn:hover {
+        background: #0f766e;
+        border-color: #0f766e;
+        color: white;
+        transform: translateY(-1px);
+    }
+    
+    .subject-btn.active {
+        background: #0f766e;
+        border-color: #0f766e;
+        color: white;
+    }
+    
+    /* Table styling */
+    .table-wrapper {
+        background: #ffffff;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        overflow-x: auto;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .ranking-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 500px;
+    }
+    
+    .ranking-table thead th {
+        background: #f8fafc;
+        padding: 1rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #1e293b;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .ranking-table tbody td {
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+    
+    .ranking-table tbody tr:hover {
+        background: #fafcff;
+    }
+    
+    .ranking-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Position badges */
+    .position-badge {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 32px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #475569;
+    }
+    
+    .position-badge.top-1 {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    
+    .position-badge.top-2 {
+        background: #e8f4f8;
+        color: #0284c7;
+    }
+    
+    .position-badge.top-3 {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+    
+    /* Grade badges */
+    .grade-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    
+    .grade-A { background: #dcfce7; color: #15803d; }
+    .grade-B { background: #dbeafe; color: #1d4ed8; }
+    .grade-C { background: #fef9c3; color: #854d0e; }
+    .grade-D { background: #ffedd5; color: #9a3412; }
+    .grade-F { background: #fee2e2; color: #b91c1c; }
+    
+    /* Student name with avatar */
+    .student-name {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .student-avatar {
+        width: 32px;
+        height: 32px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #475569;
+    }
+    
+    /* Button */
+    .btn-download {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        background: #0f766e;
+        color: white;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: none;
+    }
+    
+    .btn-download:hover {
+        background: #0b5e58;
+        transform: translateY(-1px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .page-title {
+            font-size: 1.4rem;
+        }
+        
+        .stat-value {
+            font-size: 1.3rem;
+        }
+        
+        .ranking-table thead th,
+        .ranking-table tbody td {
+            padding: 0.7rem 0.8rem;
+        }
+    }
+</style>
 
-<div class="mt-4 mb-4">
-    <h5>Subject Performance</h5>
-    <div class="d-flex flex-wrap gap-2">
+<div class="container-fluid px-3 px-md-4">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="bi bi-bar-chart-steps me-2" style="color: #0f766e;"></i>
+                Class Performance Report
+            </h1>
+            <div class="class-badge">
+                <i class="bi bi-building"></i> {{ class_stream.name }}
+            </div>
+        </div>
+        <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn-download">
+            <i class="bi bi-filetype-pdf"></i> Download PDF
+        </a>
+    </div>
+
+    <!-- Statistics Summary Cards -->
+    {% if ranking %}
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">Total Students</div>
+            <div class="stat-value">{{ total_students }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Class Average</div>
+            <div class="stat-value">{{ class_average }}<span class="stat-unit">%</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Highest Score</div>
+            <div class="stat-value">{{ highest_score }}<span class="stat-unit">pts</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Pass Rate</div>
+            <div class="stat-value">{{ pass_count }}<span class="stat-unit">students</span></div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Subject Performance Filter -->
+    <div class="section-header">
+        <div class="section-title">
+            <i class="bi bi-book"></i>
+            Subject Performance
+        </div>
+    </div>
+    
+    <div class="subject-filters">
         {% for assignment in subjects %}
-            <a
-                href="{% url 'class_subject_result' class_stream.id assignment.subject.id %}"
-                class="btn btn-outline-secondary btn-sm"
-            >
+            <a href="{% url 'class_subject_result' class_stream.id assignment.subject.id %}" class="subject-btn">
                 {{ assignment.subject.name }}
             </a>
         {% empty %}
-            <span class="text-muted">No subjects assigned to this class stream.</span>
+            <span class="text-muted small">No subjects assigned to this class stream.</span>
         {% endfor %}
     </div>
-</div>
 
-<table class="table table-bordered">
-    <tr>
-        <th>Position</th>
-        <th>Student</th>
-        <th>Total</th>
-        <th>Average</th>
-        <th>Grade</th>
-    </tr>
-    {% for item in ranking %}
-    <tr>
-        <td>{{ item.position }}</td>
-        <td>{{ item.student.first_name }} {{ item.student.last_name }}</td>
-        <td>{{ item.total }}</td>
-        <td>{{ item.average }}</td>
-        <td>{{ item.grade }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="5" class="text-center text-muted">No students in this class stream.</td>
-    </tr>
-    {% endfor %}
-</table>
+    <!-- Ranking Table -->
+    <div class="table-wrapper">
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px">Position</th>
+                    <th>Student</th>
+                    <th style="width: 100px">Total</th>
+                    <th style="width: 100px">Average</th>
+                    <th style="width: 100px">Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ranking %}
+                <tr>
+                    <td>
+                        <span class="position-badge 
+                            {% if item.position == 1 %}top-1
+                            {% elif item.position == 2 %}top-2
+                            {% elif item.position == 3 %}top-3{% endif %}">
+                            {{ item.position }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="student-name">
+                            <div class="student-avatar">
+                                {{ item.student.first_name|first }}{{ item.student.last_name|first }}
+                            </div>
+                            {{ item.student.first_name }} {{ item.student.last_name }}
+                        </div>
+                    </td>
+                    <td class="fw-600">{{ item.total }}</td>
+                    <td>{{ item.average|floatformat:1 }}%</td>
+                    <td>
+                        <span class="grade-badge grade-{{ item.grade }}">
+                            {{ item.grade }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-5">
+                        <i class="bi bi-people fs-1 d-block mb-2" style="color: #cbd5e1;"></i>
+                        No students enrolled in this class stream.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}

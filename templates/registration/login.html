@@ -33,11 +33,17 @@
 
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="alert alert-{{ message.tags|default:'danger' }}">
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                             {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     {% endfor %}
                 {% endif %}
+
+                <div class="alert alert-info small">
+                    <i class="bi bi-info-circle"></i>
+                    For security, you will be automatically logged out after 5 minutes of inactivity.
+                </div>
 
                 <div class="mb-3">
                     <label for="id_staff_no" class="form-label">Staff No</label>

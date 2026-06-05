@@ -1,10 +1,13 @@
+import datetime
 from django.shortcuts import render
 from students.models import Student
 from classes.models import ClassStream
 from subjects.models import Subject
 from assessments.models import Assessment
 from accounts.decorators import staff_required
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 @staff_required
 def dashboard(request):
@@ -15,3 +18,12 @@ def dashboard(request):
         "assessments_count": Assessment.objects.count(),
     }
     return render(request, "dashboard/index.html", context)
+
+
+
+@login_required
+@csrf_protect
+def refresh_session(request):
+    """Reset session timer"""
+    request.session['last_activity'] = datetime.now().timestamp()
+    return JsonResponse({'status': 'ok'})

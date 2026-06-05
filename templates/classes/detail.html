@@ -1,34 +1,77 @@
 {% extends 'base/base.html' %}
 
+{% block title %}{{ class_stream.name }} | Ikonex Academy{% endblock %}
+
 {% block content %}
 
-<h3>{{ class_stream.name }}</h3>
-
-<hr>
-
-<div class="d-flex gap-2 mb-3">
-    <a href="{% url 'class_result' class_stream.id %}" class="btn btn-primary btn-sm">View Results</a>
-    <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn btn-outline-primary btn-sm">Download PDF</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ class_stream.name }}</h1>
+        <p class="page-subtitle">Class details, subjects, and enrolled students.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'class_result' class_stream.id %}" class="btn btn-primary">
+            <i class="bi bi-trophy me-1"></i> View Results
+        </a>
+        <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-pdf me-1"></i> PDF Report
+        </a>
+        <a href="{% url 'class_update' class_stream.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-pencil me-1"></i> Edit
+        </a>
+        <a href="{% url 'class_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
 </div>
 
-<h5>Subjects in this class</h5>
+<div class="row g-4">
 
-<ul>
-    {% for assignment in subjects %}
-        <li>{{ assignment.subject.name }}</li>
-    {% empty %}
-        <li>No subjects assigned yet</li>
-    {% endfor %}
-</ul>
+    <!-- Subjects -->
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-700 text-muted fs-sm text-uppercase mb-3" style="letter-spacing:.08em">
+                    Subjects
+                </h6>
+                <ul class="list-unstyled mb-0">
+                    {% for assignment in subjects %}
+                    <li class="py-2 border-bottom d-flex align-items-center gap-2">
+                        <i class="bi bi-book text-brand"></i>
+                        <span>{{ assignment.subject.name }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="text-muted fst-italic">No subjects assigned yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 
-<h5>Students in this class</h5>
+    <!-- Students -->
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-700 text-muted fs-sm text-uppercase mb-3" style="letter-spacing:.08em">
+                    Students ({{ students|length }})
+                </h6>
+                <ul class="list-unstyled mb-0">
+                    {% for student in students %}
+                    <li class="py-2 border-bottom d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-person text-muted"></i>
+                            <span>{{ student.first_name }} {{ student.last_name }}</span>
+                        </div>
+                        <span class="fs-sm text-muted">{{ student.admission_no }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="text-muted fst-italic">No students enrolled yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 
-<ul>
-    {% for student in students %}
-        <li>{{ student.first_name }} {{ student.last_name }}</li>
-    {% empty %}
-        <li>No students yet</li>
-    {% endfor %}
-</ul>
+</div>
 
 {% endblock %}

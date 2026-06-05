@@ -1,28 +1,58 @@
 {% extends 'base/base.html' %}
 
+{% block title %}Class Streams | Ikonex Academy{% endblock %}
+
 {% block content %}
 
-<div class="d-flex justify-content-between mb-3">
-    <h3>Class Streams</h3>
-    <a href="{% url 'class_create' %}" class="btn btn-primary">Add Class</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Class Streams</h1>
+        <p class="page-subtitle">Manage all active class streams in the school.</p>
+    </div>
+    <a href="{% url 'class_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Add Class
+    </a>
 </div>
 
-<table class="table table-bordered">
-    <tr>
-        <th>Name</th>
-        <th>Actions</th>
-    </tr>
-
-    {% for c in classes %}
-    <tr>
-        <td>{{ c.name }}</td>
-        <td>
-            <a href="{% url 'class_detail' c.id %}">View</a> |
-            <a href="{% url 'class_update' c.id %}">Edit</a> |
-            <a href="{% url 'class_delete' c.id %}">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="app-table-wrap">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Class Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in classes %}
+            <tr>
+                <td class="fw-600">{{ c.name }}</td>
+                <td>
+                    <div class="tbl-actions">
+                        <a href="{% url 'class_detail' c.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                        <a href="{% url 'class_update' c.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'class_delete' c.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">
+                    <div class="empty-state">
+                        <i class="bi bi-building"></i>
+                        <p>No class streams added yet.</p>
+                        <a href="{% url 'class_create' %}" class="btn btn-primary btn-sm mt-2">Add First Class</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

@@ -28,4 +28,5 @@ urlpatterns = [
     path('subjects/', include('subjects.urls')),
     path('assessments/', include('assessments.urls')),
     path('reports/', include('reports.urls')),
+    path('refresh-session/', views.refresh_session, name='refresh_session'),
 ]

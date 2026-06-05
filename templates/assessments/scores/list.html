@@ -1,38 +1,64 @@
 {% extends 'base/base.html' %}
 
+{% block title %}Scores | Ikonex Academy{% endblock %}
+
 {% block content %}
 
-<div class="d-flex justify-content-between">
-    <h3>Scores</h3>
-    <a href="{% url 'score_create' %}" class="btn btn-primary">Add Score</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Scores</h1>
+        <p class="page-subtitle">All recorded student scores across assessments.</p>
+    </div>
+    <a href="{% url 'score_create' %}" class="btn btn-primary">
+        <i class="bi bi-clipboard-plus me-1"></i> Add Score
+    </a>
 </div>
 
-<table class="table table-bordered mt-3">
-    <tr>
-        <th>Student</th>
-        <th>Subject</th>
-        <th>Assessment</th>
-        <th>Marks</th>
-        <th>Actions</th>
-    </tr>
-
-    {% for s in scores %}
-    <tr>
-        <td>{{ s.student.first_name }} {{ s.student.last_name }}</td>
-        <td>{{ s.subject.name }}</td>
-        <td>{{ s.assessment.name }}</td>
-        <td>{{ s.marks }}</td>
-        <td>
-            <a href="{% url 'score_detail' s.id %}">View</a> |
-            <a href="{% url 'score_update' s.id %}">Edit</a> |
-            <a href="{% url 'score_delete' s.id %}">Delete</a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="5" class="text-center text-muted">No scores recorded yet.</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="app-table-wrap">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Assessment</th>
+                <th>Marks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in scores %}
+            <tr>
+                <td class="fw-500">{{ s.student.first_name }} {{ s.student.last_name }}</td>
+                <td>{{ s.subject.name }}</td>
+                <td>{{ s.assessment.name }}</td>
+                <td><span class="badge bg-light text-dark border fw-600">{{ s.marks }}</span></td>
+                <td>
+                    <div class="tbl-actions">
+                        <a href="{% url 'score_detail' s.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="{% url 'score_update' s.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'score_delete' s.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <i class="bi bi-clipboard-data"></i>
+                        <p>No scores recorded yet.</p>
+                        <a href="{% url 'score_create' %}" class="btn btn-primary btn-sm mt-2">Add First Score</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

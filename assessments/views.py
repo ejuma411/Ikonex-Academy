@@ -128,14 +128,40 @@ def student_result_view(request, pk):
 def class_result_view(request, class_id):
     result = class_ranking(class_id)
     class_stream = result["class_stream"]
+    ranking = result["ranking"]
     subjects = class_stream.classsubject_set.select_related("subject").all()
+    
+    # Calculate statistics for the template
+    if ranking:
+        # Class average (average of all students' averages)
+        total_average = sum(item.get('average', 0) for item in ranking)
+        class_average = round(total_average / len(ranking), 1) if ranking else 0
+        
+        # Highest total score
+        highest_score = max(item.get('total', 0) for item in ranking) if ranking else 0
+        
+        # Pass rate (students not failing)
+        pass_count = sum(1 for item in ranking if item.get('grade') != 'F')
+        
+        total_students = len(ranking)
+    else:
+        class_average = 0
+        highest_score = 0
+        pass_count = 0
+        total_students = 0
+    
     return render(
         request,
         "reports/class_report.html",
         {
             "class_stream": class_stream,
-            "ranking": result["ranking"],
+            "ranking": ranking,
             "subjects": subjects,
+            # Add these for the stats cards
+            "total_students": total_students,
+            "class_average": class_average,
+            "highest_score": highest_score,
+            "pass_count": pass_count,
         },
     )
 

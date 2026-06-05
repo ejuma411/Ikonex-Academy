@@ -1,17 +1,65 @@
 {% extends 'base/base.html' %}
 
+{% block title %}{{ student.first_name }} {{ student.last_name }} | Ikonex Academy{% endblock %}
+
 {% block content %}
 
-<h3>{{ student.first_name }} {{ student.last_name }}</h3>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ student.first_name }} {{ student.last_name }}</h1>
+        <p class="page-subtitle">Student profile and academic overview.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'student_update' student.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-pencil me-1"></i> Edit
+        </a>
+        <a href="{% url 'student_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+</div>
 
-<hr>
+<div class="row g-4">
+    <!-- Info card -->
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-700 text-muted fs-sm text-uppercase mb-3" style="letter-spacing:.08em">Student Details</h6>
+                <dl class="row mb-0" style="font-size:.9rem">
+                    <dt class="col-sm-5 text-muted fw-500">Admission No</dt>
+                    <dd class="col-sm-7 fw-600 text-brand">{{ student.admission_no }}</dd>
 
-<p><strong>Admission No:</strong> {{ student.admission_no }}</p>
-<p><strong>Class:</strong> {{ student.class_stream.name }}</p>
+                    <dt class="col-sm-5 text-muted fw-500">Full Name</dt>
+                    <dd class="col-sm-7">{{ student.first_name }} {{ student.last_name }}</dd>
 
-<div class="d-flex gap-2 mb-3">
-    <a href="{% url 'student_result' student.id %}" class="btn btn-primary btn-sm">View Result</a>
-    <a href="{% url 'student_report_pdf' student.id %}" class="btn btn-outline-primary btn-sm">Download PDF</a>
+                    <dt class="col-sm-5 text-muted fw-500">Class Stream</dt>
+                    <dd class="col-sm-7">
+                        <span class="badge bg-light text-dark border">{{ student.class_stream.name }}</span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions card -->
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-700 text-muted fs-sm text-uppercase mb-3" style="letter-spacing:.08em">Quick Actions</h6>
+                <div class="d-flex flex-column gap-2">
+                    <a href="{% url 'student_result' student.id %}" class="btn btn-primary">
+                        <i class="bi bi-trophy me-2"></i>View Result
+                    </a>
+                    <a href="{% url 'student_report_pdf' student.id %}" class="btn btn-outline-primary">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>Download PDF Report
+                    </a>
+                    <a href="{% url 'student_delete' student.id %}" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-2"></i>Delete Student
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

@@ -1,57 +1,302 @@
 {% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Reports | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center">
-    <div>
-        <h2>{{ title }}</h2>
-        <p class="text-muted mb-0">Quick access to preview and download school results.</p>
-    </div>
-</div>
+<style>
+    /* Professional styling for Reports page */
+    .page-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: #1e293b;
+        letter-spacing: -0.02em;
+    }
+    
+    .page-subtitle {
+        color: #64748b;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+    
+    /* Cards */
+    .report-card {
+        background: #ffffff;
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 25px -5px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        height: 100%;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .report-card:hover {
+        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header-custom {
+        background: #f8fafc;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .card-header-custom h5 {
+        margin: 0;
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .card-header-custom h5 i {
+        color: #0f766e;
+        font-size: 1.1rem;
+    }
+    
+    .card-body-custom {
+        padding: 0;
+    }
+    
+    /* List group styling */
+    .report-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .report-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s ease;
+    }
+    
+    .report-list-item:last-child {
+        border-bottom: none;
+    }
+    
+    .report-list-item:hover {
+        background: #fafcff;
+    }
+    
+    .report-info h6 {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 0 0 0.25rem 0;
+        color: #1e293b;
+    }
+    
+    .report-info p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+    
+    .report-info .class-badge {
+        display: inline-block;
+        background: #f1f5f9;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: #475569;
+    }
+    
+    /* Buttons */
+    .btn-pdf {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        font-weight: 500;
+        border-radius: 2rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.75rem;
+        background: transparent;
+        border: 1px solid #cbd5e1;
+        color: #475569;
+    }
+    
+    .btn-pdf:hover {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+    }
+    
+    .btn-pdf i {
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary-sm {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 1rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.75rem;
+        background: #0f766e;
+        border: none;
+        color: white;
+    }
+    
+    .btn-primary-sm:hover {
+        background: #0b5e58;
+        transform: translateY(-1px);
+    }
+    
+    /* Empty state */
+    .empty-reports {
+        text-align: center;
+        padding: 2.5rem 1.5rem;
+        color: #64748b;
+    }
+    
+    .empty-reports i {
+        font-size: 2.5rem;
+        color: #cbd5e1;
+        margin-bottom: 0.75rem;
+        display: inline-block;
+    }
+    
+    .empty-reports p {
+        margin: 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Count badges */
+    .count-badge {
+        background: #e2e8f0;
+        color: #475569;
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 1rem;
+        margin-left: 0.5rem;
+        font-weight: 500;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.4rem;
+        }
+        
+        .report-list-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .btn-pdf, .btn-primary-sm {
+            align-self: flex-start;
+        }
+    }
+</style>
 
-<div class="row g-4 mt-2">
-    <div class="col-lg-5">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title">Class Streams</h5>
-                <div class="list-group list-group-flush">
-                    {% for class_stream in class_streams %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{{ class_stream.name }}</span>
-                            {% if title == 'Reports' %}
-                                <a href="{% url class_report_name class_stream.id %}" class="btn btn-sm btn-outline-primary">PDF</a>
-                            {% else %}
-                                <a href="{% url class_report_name class_stream.id %}" class="btn btn-sm btn-primary">Open</a>
-                            {% endif %}
-                        </div>
-                    {% empty %}
-                        <div class="list-group-item text-muted">No class streams found.</div>
-                    {% endfor %}
-                </div>
-            </div>
+<div class="container-fluid px-3 px-md-4">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="bi bi-file-earmark-pdf-fill me-2" style="color: #dc2626;"></i>
+                Reports
+            </h1>
+            <p class="page-subtitle">Quick access to preview and download school results.</p>
         </div>
     </div>
 
-    <div class="col-lg-7">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title">Student Reports</h5>
-                <div class="list-group list-group-flush">
-                    {% for student in students %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="fw-semibold">{{ student.first_name }} {{ student.last_name }}</div>
-                                <small class="text-muted">{{ student.class_stream.name }} | {{ student.admission_no }}</small>
-                            </div>
-                            {% if title == 'Reports' %}
-                                <a href="{% url student_report_name student.id %}" class="btn btn-sm btn-outline-primary">PDF</a>
-                            {% else %}
-                                <a href="{% url student_report_name student.id %}" class="btn btn-sm btn-primary">Open</a>
-                            {% endif %}
+    <div class="row g-4 mt-1">
+        <!-- Class Streams Column -->
+        <div class="col-lg-5">
+            <div class="report-card">
+                <div class="card-header-custom">
+                    <h5>
+                        <i class="bi bi-diagram-3"></i>
+                        Class Streams
+                        <span class="count-badge">{{ class_streams|length }}</span>
+                    </h5>
+                </div>
+                <div class="card-body-custom">
+                    {% if class_streams %}
+                        <ul class="report-list">
+                            {% for class_stream in class_streams %}
+                                <li class="report-list-item">
+                                    <div class="report-info">
+                                        <h6>{{ class_stream.name }}</h6>
+                                        {% if class_stream.student_count %}
+                                            <p>{{ class_stream.student_count }} student(s) enrolled</p>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{% url class_report_name class_stream.id %}" class="btn-pdf">
+                                        <i class="bi bi-filetype-pdf"></i> PDF
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-reports">
+                            <i class="bi bi-folder2-open"></i>
+                            <p>No class streams found.</p>
                         </div>
-                    {% empty %}
-                        <div class="list-group-item text-muted">No students found.</div>
-                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Reports Column -->
+        <div class="col-lg-7">
+            <div class="report-card">
+                <div class="card-header-custom">
+                    <h5>
+                        <i class="bi bi-person-lines-fill"></i>
+                        Student Reports
+                        <span class="count-badge">{{ students|length }}</span>
+                    </h5>
+                </div>
+                <div class="card-body-custom">
+                    {% if students %}
+                        <ul class="report-list">
+                            {% for student in students %}
+                                <li class="report-list-item">
+                                    <div class="report-info">
+                                        <h6>{{ student.first_name }} {{ student.last_name }}</h6>
+                                        <p>
+                                            {% if student.class_stream %}
+                                                <span class="class-badge">
+                                                    <i class="bi bi-building me-1"></i>{{ student.class_stream.name }}
+                                                </span>
+                                            {% endif %}
+                                            {% if student.admission_no %}
+                                                <span class="class-badge ms-1">
+                                                    <i class="bi bi-hash me-1"></i>{{ student.admission_no }}
+                                                </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <a href="{% url student_report_name student.id %}" class="btn-pdf">
+                                        <i class="bi bi-filetype-pdf"></i> PDF
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-reports">
+                            <i class="bi bi-person-x"></i>
+                            <p>No students found.</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

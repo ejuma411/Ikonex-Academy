@@ -1,37 +1,64 @@
 {% extends 'base/base.html' %}
 
+{% block title %}Grading Scales | Ikonex Academy{% endblock %}
+
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center">
+<div class="page-header">
     <div>
-        <h3>Grading Scales</h3>
-        <p class="text-muted mb-0">Configure the mark ranges used across reports and rankings.</p>
+        <h1 class="page-title">Grading Scales</h1>
+        <p class="page-subtitle">Configure mark ranges used across reports and rankings.</p>
     </div>
-    <a href="{% url 'grade_scale_create' %}" class="btn btn-primary">Add Grade Scale</a>
+    <a href="{% url 'grade_scale_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Add Grade Scale
+    </a>
 </div>
 
-<table class="table table-bordered mt-4">
-    <tr>
-        <th>Grade</th>
-        <th>Min Mark</th>
-        <th>Max Mark</th>
-        <th>Actions</th>
-    </tr>
-    {% for grade_scale in grade_scales %}
-    <tr>
-        <td>{{ grade_scale.grade }}</td>
-        <td>{{ grade_scale.min_mark }}</td>
-        <td>{{ grade_scale.max_mark }}</td>
-        <td>
-            <a href="{% url 'grade_scale_update' grade_scale.id %}">Edit</a> |
-            <a href="{% url 'grade_scale_delete' grade_scale.id %}">Delete</a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="4" class="text-center text-muted">No grading scales configured yet.</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="app-table-wrap">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Grade</th>
+                <th>Min Mark</th>
+                <th>Max Mark</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for grade_scale in grade_scales %}
+            <tr>
+                <td>
+                    <span class="badge fw-700 px-3 py-2"
+                          style="background:var(--brand-soft);color:var(--brand);font-size:.9rem;">
+                        {{ grade_scale.grade }}
+                    </span>
+                </td>
+                <td class="fw-500">{{ grade_scale.min_mark }}</td>
+                <td class="fw-500">{{ grade_scale.max_mark }}</td>
+                <td>
+                    <div class="tbl-actions">
+                        <a href="{% url 'grade_scale_update' grade_scale.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'grade_scale_delete' grade_scale.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">
+                    <div class="empty-state">
+                        <i class="bi bi-percent"></i>
+                        <p>No grading scales configured yet.</p>
+                        <a href="{% url 'grade_scale_create' %}" class="btn btn-primary btn-sm mt-2">Add First Grade</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}
