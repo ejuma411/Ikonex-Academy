@@ -155,7 +155,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = "/media/"
@@ -328,3 +328,11 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success",
     },
 }
+
+
+import subprocess
+import sys
+
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    # Auto-collect static files on Railway
+    subprocess.call([sys.executable, 'manage.py', 'collectstatic', '--noinput'])
