@@ -1,280 +1,425 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
-{% block title %}
-Dashboard
-{% endblock %}
+{% block title %}Dashboard | Ikonex Academy{% endblock %}
 
 {% block content %}
 
 <style>
-.dashboard-hero{
-    background: linear-gradient(135deg, var(--brand), #14b8a6);
-    color:#fff;
-    border-radius:1.25rem;
-    padding:2rem;
-    margin-bottom:1.5rem;
-    box-shadow: var(--shadow-md);
-}
-
-.dashboard-hero h2{
-    margin-bottom:.5rem;
-    font-weight:700;
-}
-
-.dashboard-stat{
-    border:none;
-    transition:.25s ease;
-    height:100%;
-}
-
-.dashboard-stat:hover{
-    transform:translateY(-4px);
-}
-
-.dashboard-icon{
-    width:60px;
-    height:60px;
-    border-radius:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:1.4rem;
-    background:var(--brand-soft);
-    color:var(--brand);
-}
-
-.dashboard-number{
-    font-size:2rem;
-    font-weight:700;
-    margin-bottom:0;
-}
-
-.dashboard-label{
-    color:var(--text-muted);
-    margin-bottom:0;
-}
-
-.quick-actions .btn{
-    border-radius:12px;
-    padding:.75rem 1rem;
-}
-
-.dashboard-section-title{
-    font-size:1.1rem;
-    font-weight:700;
-    margin-bottom:1rem;
-}
-
-.activity-item{
-    padding:.85rem 0;
-    border-bottom:1px solid var(--line);
-}
-
-.activity-item:last-child{
-    border-bottom:none;
-}
-
-.summary-list li{
-    padding:.75rem 0;
-    border-bottom:1px solid var(--line);
-}
-
-.summary-list li:last-child{
-    border-bottom:none;
-}
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Dashboard - Matches Student Performance Report
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section - Official Seal Style */
+    .page-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--accent-primary);
+    }
+    
+    .school-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        letter-spacing: 1px;
+        font-family: 'Georgia', 'Times New Roman', serif;
+        margin-bottom: 0;
+    }
+    
+    .dashboard-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 0.25rem;
+    }
+    
+    /* Hero Section */
+    .dashboard-hero {
+        background: linear-gradient(135deg, var(--accent-primary) 0%, #0f3b6b 100%);
+        color: #fff;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-md);
+    }
+    
+    .dashboard-hero h2 {
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        font-size: 1.25rem;
+        font-family: 'Georgia', serif;
+    }
+    
+    .dashboard-hero p {
+        opacity: 0.9;
+        font-size: 0.85rem;
+    }
+    
+    /* Quick Action Buttons */
+    .quick-actions .btn {
+        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .btn-light {
+        background: white;
+        color: var(--accent-primary);
+        border: none;
+    }
+    
+    .btn-light:hover {
+        background: var(--gray-100);
+        transform: translateY(-1px);
+    }
+    
+    .btn-outline-light {
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+    
+    .btn-outline-light:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: white;
+    }
+    
+    /* Stats Cards - Like Performance Stats */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .stat-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .stat-info {
+        flex: 1;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--gray-600);
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+    }
+    
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        margin-bottom: 0;
+        font-family: 'Georgia', serif;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--gray-50);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-primary);
+        font-size: 1.25rem;
+    }
+    
+    /* Section Cards */
+    .section-card {
+        background: white;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .section-header {
+        background: var(--gray-50);
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--gray-200);
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--gray-700);
+    }
+    
+    .section-body {
+        padding: 0;
+    }
+    
+    /* Lists */
+    .summary-list, .activity-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .summary-list li, .activity-list li {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--gray-100);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+    
+    .summary-list li:last-child, .activity-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .summary-list strong {
+        color: var(--accent-primary);
+        font-weight: 700;
+        min-width: 60px;
+    }
+    
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--gray-50);
+        border-radius: 0.375rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        color: var(--accent-primary);
+    }
+    
+    .activity-text {
+        flex: 1;
+    }
+    
+    .activity-time {
+        font-size: 0.7rem;
+        color: var(--gray-500);
+    }
+    
+    /* Footer */
+    .dashboard-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .dashboard-hero h2 {
+            font-size: 1.1rem;
+        }
+        
+        .quick-actions {
+            margin-top: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<!-- Hero Section -->
-
-<div class="dashboard-hero">
-
-    <div class="row align-items-center">
-
-        <div class="col-lg-8">
-            <h2>Welcome Back, Administrator</h2>
-
-            <p class="mb-0">
-                Manage students, classes, assessments, grades and reports
-                from one centralized dashboard.
-            </p>
-        </div>
-
-        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-
-            <div class="quick-actions d-flex flex-wrap justify-content-lg-end gap-2">
-
-                <a href="{% url 'student_create' %}" class="btn btn-light">
-                    <i class="bi bi-person-plus"></i>
-                    Add Student
-                </a>
-
-                <a href="{% url 'assessment_create' %}" class="btn btn-outline-light">
-                    <i class="bi bi-journal-plus"></i>
-                    New Assessment
-                </a>
-
-            </div>
-
-        </div>
-
+<div class="container-fluid px-3 px-md-4">
+    <!-- Official Header -->
+    <div class="page-header">
+        <div class="school-name">IKONEX ACADEMY</div>
+        <div class="dashboard-title">ADMINISTRATOR DASHBOARD</div>
     </div>
-
-</div>
-
-<!-- Statistics -->
-
-<div class="row g-4 mb-4">
-
-    <div class="col-md-6 col-xl-3">
-        <div class="card dashboard-stat">
-            <div class="card-body d-flex justify-content-between align-items-center">
-
-                <div>
-                    <p class="dashboard-label">Students</p>
-                    <h3 class="dashboard-number">{{ students_count }}</h3>
+    
+    <!-- Hero Section -->
+    <div class="dashboard-hero">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2>Welcome Back, {{ request.user.get_full_name|default:"Administrator" }}</h2>
+                <p class="mb-0">
+                    Manage students, classes, assessments, grades and reports from one centralized dashboard.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <div class="quick-actions d-flex flex-wrap justify-content-lg-end gap-2">
+                    <a href="{% url 'student_create' %}" class="btn btn-light">
+                        <i class="bi bi-person-plus"></i> Add Student
+                    </a>
+                    <a href="{% url 'assessment_create' %}" class="btn btn-outline-light">
+                        <i class="bi bi-journal-plus"></i> New Assessment
+                    </a>
                 </div>
-
-                <div class="dashboard-icon">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-info">
+                    <div class="stat-label">Students</div>
+                    <div class="stat-number">{{ students_count|default:"0" }}</div>
+                </div>
+                <div class="stat-icon">
                     <i class="bi bi-people"></i>
                 </div>
-
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6 col-xl-3">
-        <div class="card dashboard-stat">
-            <div class="card-body d-flex justify-content-between align-items-center">
-
-                <div>
-                    <p class="dashboard-label">Classes</p>
-                    <h3 class="dashboard-number">{{ classes_count }}</h3>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-info">
+                    <div class="stat-label">Classes</div>
+                    <div class="stat-number">{{ classes_count|default:"0" }}</div>
                 </div>
-
-                <div class="dashboard-icon">
+                <div class="stat-icon">
                     <i class="bi bi-building"></i>
                 </div>
-
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6 col-xl-3">
-        <div class="card dashboard-stat">
-            <div class="card-body d-flex justify-content-between align-items-center">
-
-                <div>
-                    <p class="dashboard-label">Subjects</p>
-                    <h3 class="dashboard-number">{{ subjects_count }}</h3>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-info">
+                    <div class="stat-label">Subjects</div>
+                    <div class="stat-number">{{ subjects_count|default:"0" }}</div>
                 </div>
-
-                <div class="dashboard-icon">
+                <div class="stat-icon">
                     <i class="bi bi-book"></i>
                 </div>
-
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6 col-xl-3">
-        <div class="card dashboard-stat">
-            <div class="card-body d-flex justify-content-between align-items-center">
-
-                <div>
-                    <p class="dashboard-label">Assessments</p>
-                    <h3 class="dashboard-number">{{ assessments_count }}</h3>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-info">
+                    <div class="stat-label">Assessments</div>
+                    <div class="stat-number">{{ assessments_count|default:"0" }}</div>
                 </div>
-
-                <div class="dashboard-icon">
+                <div class="stat-icon">
                     <i class="bi bi-clipboard-check"></i>
                 </div>
-
             </div>
         </div>
     </div>
-
-</div>
-
-<!-- Secondary Content -->
-
-<div class="row g-4">
-
-    <!-- Recent Activity -->
-
-    <div class="col-lg-7">
-
-        <div class="card">
-
-            <div class="card-body">
-
-                <h5 class="dashboard-section-title">
-                    Recent Activity
-                </h5>
-
-                <div class="activity-item">
-                    Student registrations will appear here.
+    
+    <!-- Secondary Content -->
+    <div class="row g-4">
+        <!-- System Summary -->
+        <div class="col-lg-5">
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="bi bi-info-circle me-2"></i> System Summary
                 </div>
-
-                <div class="activity-item">
-                    Recently entered scores will appear here.
+                <div class="section-body">
+                    <ul class="summary-list">
+                        <li>
+                            <strong>{{ students_count|default:"0" }}</strong>
+                            Students Registered
+                        </li>
+                        <li>
+                            <strong>{{ classes_count|default:"0" }}</strong>
+                            Active Class Streams
+                        </li>
+                        <li>
+                            <strong>{{ subjects_count|default:"0" }}</strong>
+                            Subjects Available
+                        </li>
+                        <li>
+                            <strong>{{ assessments_count|default:"0" }}</strong>
+                            Assessments Configured
+                        </li>
+                    </ul>
                 </div>
-
-                <div class="activity-item">
-                    New assessments will appear here.
-                </div>
-
-                <div class="activity-item">
-                    Generated reports will appear here.
-                </div>
-
             </div>
-
         </div>
-
-    </div>
-
-    <!-- System Summary -->
-
-    <div class="col-lg-5">
-
-        <div class="card">
-
-            <div class="card-body">
-
-                <h5 class="dashboard-section-title">
-                    System Summary
-                </h5>
-
-                <ul class="list-unstyled summary-list mb-0">
-
-                    <li>
-                        <strong>{{ students_count }}</strong>
-                        Students Registered
-                    </li>
-
-                    <li>
-                        <strong>{{ classes_count }}</strong>
-                        Active Class Streams
-                    </li>
-
-                    <li>
-                        <strong>{{ subjects_count }}</strong>
-                        Subjects Available
-                    </li>
-
-                    <li>
-                        <strong>{{ assessments_count }}</strong>
-                        Assessments Configured
-                    </li>
-
-                </ul>
-
+        
+        <!-- Recent Activity -->
+        <div class="col-lg-7">
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="bi bi-clock-history me-2"></i> Recent Activity
+                </div>
+                <div class="section-body">
+                    <ul class="activity-list">
+                        {% if recent_activities %}
+                            {% for activity in recent_activities %}
+                            <li>
+                                <div class="d-flex align-items-center w-100">
+                                    <div class="activity-icon">
+                                        <i class="bi {{ activity.icon }}"></i>
+                                    </div>
+                                    <div class="activity-text">
+                                        <strong>{{ activity.title }}</strong>
+                                        <div class="small text-muted">{{ activity.description }}</div>
+                                    </div>
+                                    <div class="activity-time">{{ activity.time_ago }}</div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                                No recent activity to display.
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-
         </div>
-
     </div>
-
+    
+    <!-- Footer -->
+    <div class="dashboard-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Dashboard — Ikonex Academy
+    </div>
 </div>
 
 {% endblock %}

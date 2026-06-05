@@ -96,119 +96,97 @@ def _styles():
     return styles
 
 
+from assessments.pdf_generator import StudentReportPDF
+from io import BytesIO
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from students.models import Student
+
+
 @staff_required
-def student_report_pdf(request, pk):
-    from reportlab.lib import colors
-    from reportlab.lib.units import mm
-    from reportlab.platypus import Paragraph, Spacer, Table, TableStyle
-
-    student = get_object_or_404(Student.objects.select_related("class_stream"), pk=pk)
+def student_report_pdf(request, student_id):
+    """Generate professional PDF report for a student"""
+    student = get_object_or_404(Student.objects.select_related('class_stream'), pk=student_id)
+    
+    # Get student results
     result = student_result(student)
-    buffer, response = _build_pdf_response(f"student-report-{student.admission_no}.pdf")
-    doc = _document(buffer)
-    styles = _styles()
-
-    story = [
-        Paragraph("Ikonex Academy", styles["CenteredTitle"]),
-        Spacer(1, 8),
-        Paragraph("Student Report Card", styles["Heading2"]),
-        Spacer(1, 8),
-        Paragraph(f"Name: {student.first_name} {student.last_name}", styles["BodyText"]),
-        Paragraph(f"Admission No: {student.admission_no}", styles["BodyText"]),
-        Paragraph(f"Class: {student.class_stream.name}", styles["BodyText"]),
-        Paragraph(f"Overall Total: {result['total']}", styles["BodyText"]),
-        Paragraph(f"Overall Average: {result['average']}", styles["BodyText"]),
-        Paragraph(f"Overall Grade: {result['grade']}", styles["BodyText"]),
-        Paragraph(
-            f"Class Position: {result['class_position']} of {result['class_size']}",
-            styles["BodyText"],
+    class_summary = class_ranking(student.class_stream_id)
+    
+    # Get class position
+    class_position = next(
+        (
+            row["position"]
+            for row in class_summary["ranking"]
+            if row["student"].pk == student.pk
         ),
-        Spacer(1, 12),
-    ]
-
-    table_data = [["Subject", "Total", "Average", "Grade"]]
-    for row in result["subject_summary"]:
-        table_data.append(
-            [
-                row["subject_name"],
-                f"{row['total']:.2f}",
-                f"{row['average']:.2f}",
-                row["grade"],
-            ]
-        )
-
-    story.append(
-        Table(
-            table_data,
-            hAlign="LEFT",
-            style=TableStyle(
-                [
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
-                    ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f8fafc")]),
-                    ("PADDING", (0, 0), (-1, -1), 6),
-                ]
-            ),
-        )
+        None,
     )
-
-    doc.build(story)
-    response.write(buffer.getvalue())
-    buffer.close()
+    class_size = len(class_summary["ranking"])
+    
+    # Extract data
+    scores = result.get('scores', [])
+    subject_summary = result.get('subject_summary', [])
+    total = result.get('total', 0)
+    average = result.get('average', 0)
+    grade = result.get('grade', 'N/A')
+    
+    # Generate PDF
+    buffer = BytesIO()
+    pdf_generator = StudentReportPDF(
+        buffer, student, scores, subject_summary, 
+        total, average, grade, class_position, class_size
+    )
+    pdf_generator.generate()
+    
+    buffer.seek(0)
+    
+    # Return PDF response
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="student_report_{student.admission_no}_{timezone.now().strftime("%Y%m%d")}.pdf"'
     return response
+
+from io import BytesIO
+from django.http import HttpResponse
+from django.utils import timezone
+from assessments.pdf_generator import ProfessionalReportPDF
 
 
 @staff_required
 def class_report_pdf(request, class_id):
-    from reportlab.lib import colors
-    from reportlab.lib.units import mm
-    from reportlab.platypus import Paragraph, Spacer, Table, TableStyle
-
+    """Generate professional PDF report for a class using ReportLab"""
     result = class_ranking(class_id)
     class_stream = result["class_stream"]
-    safe_name = class_stream.name.replace(" ", "-")
-    buffer, response = _build_pdf_response(f"class-report-{safe_name}.pdf")
-    doc = _document(buffer)
-    styles = _styles()
-
-    story = [
-        Paragraph("Ikonex Academy", styles["CenteredTitle"]),
-        Spacer(1, 8),
-        Paragraph(f"Class Performance Report: {class_stream.name}", styles["Heading2"]),
-        Spacer(1, 12),
-    ]
-
-    table_data = [["Position", "Student", "Total", "Average", "Grade"]]
-    for row in result["ranking"]:
-        student = row["student"]
-        table_data.append(
-            [
-                str(row["position"]),
-                f"{student.first_name} {student.last_name}",
-                f"{row['total']:.2f}",
-                f"{row['average']:.2f}",
-                row["grade"],
-            ]
-        )
-
-    story.append(
-        Table(
-            table_data,
-            hAlign="LEFT",
-            style=TableStyle(
-                [
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
-                    ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f8fafc")]),
-                    ("PADDING", (0, 0), (-1, -1), 6),
-                ]
-            ),
-        )
-    )
-
-    doc.build(story)
-    response.write(buffer.getvalue())
-    buffer.close()
+    ranking = result["ranking"]
+    subjects = class_stream.class_subjects.select_related('subject').all()
+    
+    # Calculate statistics
+    if ranking:
+        total_students = len(ranking)
+        class_average = sum(item['average'] for item in ranking) / len(ranking)
+        highest_score = max(item['total'] for item in ranking)
+        pass_count = sum(1 for item in ranking if item['grade'] not in ['E', 'F', 'N/A'])
+    else:
+        total_students = 0
+        class_average = 0
+        highest_score = 0
+        pass_count = 0
+    
+    stats = {
+        'total_students': total_students,
+        'class_average': round(class_average, 1),
+        'highest_score': highest_score,
+        'pass_count': pass_count,
+    }
+    
+    # Generate PDF
+    buffer = BytesIO()
+    pdf_generator = ProfessionalReportPDF(buffer, class_stream, ranking, subjects, stats)
+    pdf_generator.generate()
+    
+    buffer.seek(0)
+    
+    # Return PDF response
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="class_report_{class_stream.name}_{timezone.now().strftime("%Y%m%d")}.pdf"'
     return response

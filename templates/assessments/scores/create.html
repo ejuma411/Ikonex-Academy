@@ -254,3 +254,77 @@
 </div>
 
 {% endblock %}
+
+{% block extra_js %}
+<script>
+/* Real-time validation for Score form (Issue #5) */
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        var studentSel    = document.getElementById('id_student');
+        var subjectSel    = document.getElementById('id_subject');
+        var assessmentSel = document.getElementById('id_assessment');
+        var marksInp      = document.getElementById('id_marks');
+
+        function injectErr(inp, id) {
+            if (!inp || document.getElementById(id)) return;
+            var d = document.createElement('div');
+            d.id = id;
+            d.style.cssText = 'font-size:0.75rem;color:#dc2626;margin-top:0.25rem;display:none;';
+            inp.parentNode.insertBefore(d, inp.nextSibling);
+        }
+        function showErr(id, msg) {
+            var el = document.getElementById(id);
+            if (el) { el.textContent = msg; el.style.display = 'block'; }
+        }
+        function clearErr(id) {
+            var el = document.getElementById(id);
+            if (el) { el.textContent = ''; el.style.display = 'none'; }
+        }
+
+        injectErr(studentSel,    'err-student');
+        injectErr(subjectSel,    'err-subject');
+        injectErr(assessmentSel, 'err-assessment');
+        injectErr(marksInp,      'err-marks');
+
+        function validateMarks() {
+            if (!marksInp) return true;
+            var val = parseFloat(marksInp.value);
+            if (marksInp.value === '' || isNaN(val)) { showErr('err-marks', 'Marks are required.'); return false; }
+            if (val < 0) { showErr('err-marks', 'Marks cannot be negative.'); return false; }
+            /* If an assessment is selected, check against its total marks displayed in option text */
+            if (assessmentSel && assessmentSel.value) {
+                var optText = assessmentSel.options[assessmentSel.selectedIndex].text;
+                var totalMatch = optText.match(/(\d+)\s*$/);
+                if (!totalMatch) { clearErr('err-marks'); return true; }
+            }
+            clearErr('err-marks'); return true;
+        }
+
+        if (marksInp) {
+            marksInp.addEventListener('input', validateMarks);
+            marksInp.addEventListener('blur',  validateMarks);
+        }
+        if (studentSel) studentSel.addEventListener('change', function() {
+            if (!this.value) showErr('err-student', 'Please select a student.'); else clearErr('err-student');
+        });
+        if (subjectSel) subjectSel.addEventListener('change', function() {
+            if (!this.value) showErr('err-subject', 'Please select a subject.'); else clearErr('err-subject');
+        });
+        if (assessmentSel) assessmentSel.addEventListener('change', function() {
+            if (!this.value) showErr('err-assessment', 'Please select an assessment.'); else clearErr('err-assessment');
+            validateMarks();
+        });
+
+        var form = document.querySelector('form');
+        if (form) form.addEventListener('submit', function(e) {
+            var ok = true;
+            if (studentSel    && !studentSel.value)    { showErr('err-student', 'Please select a student.'); ok = false; }
+            if (subjectSel    && !subjectSel.value)    { showErr('err-subject', 'Please select a subject.'); ok = false; }
+            if (assessmentSel && !assessmentSel.value) { showErr('err-assessment', 'Please select an assessment.'); ok = false; }
+            if (!validateMarks()) ok = false;
+            if (!ok) e.preventDefault();
+        });
+    });
+})();
+</script>
+{% endblock %}

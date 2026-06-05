@@ -2,24 +2,31 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Assessments
     path('', views.assessment_list, name='assessment_list'),
     path('create/', views.assessment_create, name='assessment_create'),
     path('<int:pk>/', views.assessment_detail, name='assessment_detail'),
     path('<int:pk>/update/', views.assessment_update, name='assessment_update'),
     path('<int:pk>/delete/', views.assessment_delete, name='assessment_delete'),
 
+    # Scores
     path('scores/', views.score_list, name='score_list'),
     path('scores/create/', views.score_create, name='score_create'),
     path('scores/<int:pk>/', views.score_detail, name='score_detail'),
     path('scores/<int:pk>/update/', views.score_update, name='score_update'),
     path('scores/<int:pk>/delete/', views.score_delete, name='score_delete'),
+    
+    # Results
     path('results/student/<int:pk>/', views.student_result_view, name='student_result'),
     path('results/class/<int:class_id>/', views.class_result_view, name='class_result'),
+    path('results/class/<int:class_id>/pdf/', views.class_report_pdf, name='class_report_pdf'),
     path(
         'results/class/<int:class_id>/subject/<int:subject_id>/',
         views.class_subject_result_view,
         name='class_subject_result',
     ),
+    
+    # Grade Scales
     path('grades/', views.grade_scale_list, name='grade_scale_list'),
     path('grades/create/', views.grade_scale_create, name='grade_scale_create'),
     path('grades/<int:pk>/update/', views.grade_scale_update, name='grade_scale_update'),

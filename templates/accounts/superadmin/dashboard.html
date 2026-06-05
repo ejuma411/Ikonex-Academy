@@ -1,252 +1,410 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Superadmin Dashboard | User Management{% endblock %}
+{% block title %}User Management | Ikonex Academy{% endblock %}
 
 {% block content %}
+
 <style>
-    .dashboard-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Matches the Student Performance Report screenshot
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     }
     
-    .stat-card {
-        background: white;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        border: 1px solid #e2e8f0;
-        transition: all 0.2s;
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-    }
-    
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #0f766e;
-        margin-bottom: 0.5rem;
-    }
-    
-    .stat-label {
-        color: #64748b;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .action-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    
-    .action-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.75rem;
-        padding: 1.25rem;
+    /* Header Section - Official Seal Style (Matches Screenshot) */
+    .page-header {
         text-align: center;
-        transition: all 0.2s;
-        text-decoration: none;
-        display: block;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--accent-primary);
     }
     
-    .action-card:hover {
-        background: #0f766e;
-        transform: translateY(-2px);
+    .school-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        letter-spacing: 1px;
+        font-family: 'Georgia', 'Times New Roman', serif;
+        margin-bottom: 0;
     }
     
-    .action-card:hover i,
-    .action-card:hover span {
-        color: white;
+    .report-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 0.25rem;
     }
     
-    .action-card i {
-        font-size: 2rem;
-        color: #0f766e;
-        margin-bottom: 0.5rem;
-        display: inline-block;
-    }
-    
-    .action-card span {
-        display: block;
-        color: #1e293b;
-        font-weight: 500;
-    }
-    
-    .section-card {
+    /* Student Info Card (Matches screenshot structure) */
+    .info-card {
         background: white;
-        border-radius: 1rem;
-        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
         margin-bottom: 1.5rem;
         overflow: hidden;
     }
     
-    .section-header {
-        background: #f8fafc;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #e2e8f0;
+    .info-card-header {
+        background: var(--gray-50);
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--gray-200);
         font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--gray-700);
+    }
+    
+    .info-card-body {
+        padding: 1rem;
+    }
+    
+    .info-row {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
     }
     
-    .section-body {
-        padding: 0;
+    .info-label {
+        width: 120px;
+        font-weight: 500;
+        color: var(--gray-600);
     }
     
-    .user-list, .assignment-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
+    .info-value {
+        color: var(--gray-800);
+        font-weight: 500;
     }
     
-    .user-list li, .assignment-list li {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #f1f5f9;
+    /* Stats Cards - Like the performance stats */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-box {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        font-family: 'Georgia', serif;
+    }
+    
+    .stat-label {
+        font-size: 0.65rem;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Action Buttons - Like subject buttons */
+    .action-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.75rem;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        gap: 0.5rem;
     }
     
-    .user-list li:last-child, .assignment-list li:last-child {
-        border-bottom: none;
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
     }
     
-    .badge {
-        padding: 0.25rem 0.75rem;
+    .btn-action {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
         border-radius: 2rem;
-        font-size: 0.7rem;
+        padding: 0.4rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--gray-700);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .btn-action:hover {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+    }
+    
+    /* Tables - Like the ranking table */
+    .table-container {
+        background: white;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+    }
+    
+    .data-table th {
+        background: var(--gray-50);
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .data-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--gray-100);
+        color: var(--gray-700);
+    }
+    
+    .data-table tr:hover {
+        background: var(--gray-50);
+    }
+    
+    /* Badges */
+    .role-badge {
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.65rem;
         font-weight: 600;
     }
     
-    .badge-teacher { background: #dbeafe; color: #1e40af; }
-    .badge-staff { background: #fef3c7; color: #92400e; }
-    .badge-superadmin { background: #dcfce7; color: #15803d; }
+    .role-superadmin { background: #dcfce7; color: #15803d; }
+    .role-teacher { background: #dbeafe; color: #1e40af; }
+    .role-staff { background: #fef3c7; color: #92400e; }
     
-    .btn-sm {
-        padding: 0.25rem 0.75rem;
-        font-size: 0.75rem;
-        border-radius: 0.375rem;
+    /* Action Links */
+    .action-link {
+        color: var(--accent-primary);
         text-decoration: none;
+        margin-right: 0.75rem;
+        font-size: 0.7rem;
     }
     
-    .btn-outline-primary {
-        border: 1px solid #0f766e;
-        color: #0f766e;
-        background: transparent;
+    .action-link:hover {
+        text-decoration: underline;
     }
     
-    .btn-outline-primary:hover {
-        background: #0f766e;
-        color: white;
+    /* Footer */
+    .footer-note {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .info-row {
+            flex-direction: column;
+        }
+        
+        .info-label {
+            width: 100%;
+            margin-bottom: 0.25rem;
+        }
     }
 </style>
 
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h2 mb-0">User Management Dashboard</h1>
-            <p class="text-muted">Manage teachers, staff, and system assignments</p>
+<div class="container-fluid px-3 px-md-4">
+    <!-- Official Header (Matches Screenshot) -->
+    <div class="page-header">
+        <div class="school-name">IKONEX ACADEMY</div>
+        <div class="report-title">USER MANAGEMENT DASHBOARD</div>
+    </div>
+    
+    <!-- User Info Card (Matches Student Info Card style) -->
+    <div class="info-card">
+        <div class="info-card-header">
+            <i class="bi bi-person-circle me-2"></i> Administrator Information
         </div>
-        <div>
-            <span class="text-muted">{{ request.user.get_full_name }}</span>
+        <div class="info-card-body">
+            <div class="info-row">
+                <div class="info-label">Administrator:</div>
+                <div class="info-value">{{ request.user.get_full_name|default:request.user.username }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Role:</div>
+                <div class="info-value">Super Administrator</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Department:</div>
+                <div class="info-value">Academic Administration</div>
+            </div>
         </div>
     </div>
     
-    <!-- Quick Actions -->
-    <div class="action-grid">
-        <a href="{% url 'user_create' %}" class="action-card">
-            <i class="bi bi-person-plus-fill"></i>
-            <span>Create New User</span>
-        </a>
-        <a href="{% url 'user_list' %}" class="action-card">
-            <i class="bi bi-people-fill"></i>
-            <span>View All Users</span>
-        </a>
-        <a href="{% url 'assign_class_teacher' %}" class="action-card">
-            <i class="bi bi-building-fill"></i>
-            <span>Assign Class Teacher</span>
-        </a>
-        <a href="{% url 'assign_subject_teacher' %}" class="action-card">
-            <i class="bi bi-book-fill"></i>
-            <span>Assign Subject Teacher</span>
-        </a>
-    </div>
-    
-    <!-- Statistics -->
-    <div class="dashboard-stats">
-        <div class="stat-card">
-            <div class="stat-number">{{ total_teachers }}</div>
+    <!-- Statistics Summary (Matches Performance Stats) -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-number">{{ total_teachers|default:"0" }}</div>
             <div class="stat-label">Teachers</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ total_staff }}</div>
+        <div class="stat-box">
+            <div class="stat-number">{{ total_staff|default:"0" }}</div>
             <div class="stat-label">Staff Members</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ total_class_assignments }}</div>
+        <div class="stat-box">
+            <div class="stat-number">{{ total_class_assignments|default:"0" }}</div>
             <div class="stat-label">Class Assignments</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ total_subject_assignments }}</div>
+        <div class="stat-box">
+            <div class="stat-number">{{ total_subject_assignments|default:"0" }}</div>
             <div class="stat-label">Subject Assignments</div>
         </div>
     </div>
     
-    <!-- Recent Users -->
-    <div class="section-card">
-        <div class="section-header">
-            <span><i class="bi bi-clock-history me-2"></i> Recently Added Users</span>
-            <a href="{% url 'user_list' %}" class="text-primary small">View All →</a>
+    <!-- Action Buttons (Matches Subject Analysis buttons) -->
+    <div class="action-section">
+        <div class="section-title">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+            Management Actions
         </div>
-        <div class="section-body">
-            <ul class="user-list">
-                {% for user in recent_users %}
-                <li>
-                    <div>
-                        <strong>{{ user.get_full_name|default:user.username }}</strong>
-                        <span class="badge ms-2 badge-{{ user.role }}">{{ user.get_role_display }}</span>
-                        <div class="small text-muted">Added: {{ user.date_joined|date:"M d, Y" }}</div>
-                    </div>
-                    <a href="{% url 'user_detail' user.id %}" class="btn-sm btn-outline-primary">View</a>
-                </li>
-                {% empty %}
-                <li class="text-muted text-center py-3">No users added yet.</li>
-                {% endfor %}
-            </ul>
+        <div class="action-buttons">
+            <a href="{% url 'user_create' %}" class="btn-action">
+                <i class="bi bi-person-plus"></i> Create User
+            </a>
+            <a href="{% url 'user_list' %}" class="btn-action">
+                <i class="bi bi-people"></i> All Users
+            </a>
+            <a href="{% url 'assign_class_teacher' %}" class="btn-action">
+                <i class="bi bi-building"></i> Assign Class
+            </a>
+            <a href="{% url 'assign_subject_teacher' %}" class="btn-action">
+                <i class="bi bi-book"></i> Assign Subject
+            </a>
         </div>
     </div>
     
-    <!-- Recent Class Assignments -->
-    <div class="section-card">
-        <div class="section-header">
-            <span><i class="bi bi-building me-2"></i> Recent Class Teacher Assignments</span>
-            <a href="{% url 'assign_class_teacher' %}" class="text-primary small">New Assignment →</a>
-        </div>
-        <div class="section-body">
-            <ul class="assignment-list">
-                {% for assignment in recent_class_assignments %}
-                <li>
-                    <div>
-                        <strong>{{ assignment.class_stream.name }}</strong>
-                        <div class="small">Teacher: {{ assignment.teacher.get_full_name }}</div>
-                        <div class="small text-muted">Year: {{ assignment.academic_year }}</div>
-                    </div>
-                    <span class="badge bg-success small">Active</span>
-                </li>
+    <!-- Recent Users Table (Matches Ranking Table) -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Staff ID</th>
+                    <th>Date Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in recent_users %}
+                <tr>
+                    <td>
+                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                    </td>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        <span class="role-badge role-{{ user.role }}">
+                            {{ user.get_role_display|default:user.role }}
+                        </span>
+                    </td>
+                    <td>{{ user.staff_id|default:"—" }}</td>
+                    <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'user_detail' user.id %}" class="action-link">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
                 {% empty %}
-                <li class="text-muted text-center py-3">No class assignments yet.</li>
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                        <i class="bi bi-people fs-4 d-block mb-1"></i>
+                        No users added yet.
+                    </td>
+                </tr>
                 {% endfor %}
-            </ul>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Recent Assignments Section -->
+    <div class="action-section">
+        <div class="section-title">
+            <i class="bi bi-clock-history"></i>
+            Recent Class Teacher Assignments
         </div>
     </div>
+    
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Class Stream</th>
+                    <th>Teacher</th>
+                    <th>Academic Year</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in recent_class_assignments %}
+                <tr>
+                    <td><strong>{{ assignment.class_stream.name }}</strong></td>
+                    <td>{{ assignment.teacher.get_full_name }}</td>
+                    <td>{{ assignment.academic_year }}</td>
+                    <td><span class="role-badge" style="background:#dcfce7; color:#15803d;">Active</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                        <i class="bi bi-building fs-4 d-block mb-1"></i>
+                        No class assignments yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Footer (Matches screenshot footer) -->
+    <div class="footer-note">
+        <i class="bi bi-shield-check"></i> Official Administration Portal — Ikonex Academy
+    </div>
 </div>
+
 {% endblock %}

@@ -13,6 +13,8 @@
         padding: 2rem;
         margin: 0 auto;
     }
+    .field-error { font-size: 0.75rem; color: #dc2626; margin-top: 0.25rem; display: none; }
+    .field-error.visible { display: block; }
 </style>
 
 <div class="container-fluid px-4">
@@ -27,41 +29,101 @@
     </div>
     
     <div class="form-container">
-        <form method="post">
+        <form method="post" id="assign-subject-form" novalidate>
             {% csrf_token %}
             
             <div class="mb-3">
-                <label class="form-label">Teacher</label>
+                <label class="form-label fw-semibold">Teacher <span class="text-danger">*</span></label>
                 {{ form.teacher }}
-                {% if form.teacher.errors %}
-                    <div class="text-danger small">{{ form.teacher.errors }}</div>
-                {% endif %}
+                <div class="field-error {% if form.teacher.errors %}visible{% endif %}" id="err-teacher">
+                    {% if form.teacher.errors %}{{ form.teacher.errors|striptags }}{% endif %}
+                </div>
             </div>
             
             <div class="mb-3">
-                <label class="form-label">Class & Subject</label>
+                <label class="form-label fw-semibold">Class &amp; Subject <span class="text-danger">*</span></label>
                 {{ form.class_subject }}
                 <div class="form-text">Select a class and subject combination</div>
-                {% if form.class_subject.errors %}
-                    <div class="text-danger small">{{ form.class_subject.errors }}</div>
-                {% endif %}
+                <div class="field-error {% if form.class_subject.errors %}visible{% endif %}" id="err-class_subject">
+                    {% if form.class_subject.errors %}{{ form.class_subject.errors|striptags }}{% endif %}
+                </div>
             </div>
             
             <div class="mb-3">
-                <label class="form-label">Academic Year</label>
+                <label class="form-label fw-semibold">Academic Year <span class="text-danger">*</span></label>
                 {{ form.academic_year }}
-                <div class="form-text">Format: 2024/2025</div>
-                {% if form.academic_year.errors %}
-                    <div class="text-danger small">{{ form.academic_year.errors }}</div>
-                {% endif %}
+                <div class="form-text">Format: YYYY/YYYY+1 (e.g. 2026/2027). Must be current or future year.</div>
+                <div class="field-error {% if form.academic_year.errors %}visible{% endif %}" id="err-academic_year">
+                    {% if form.academic_year.errors %}{{ form.academic_year.errors|striptags }}{% endif %}
+                </div>
             </div>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
             
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary w-100">
+            <!-- Issue #7: Cancel always active -->
+            <div class="mt-4 d-flex gap-3">
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> Assign Subject Teacher
                 </button>
+                <a href="{% url 'superadmin_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* Real-time validation for subject teacher assignment form (Issue #3, #5) */
+(function() {
+    var yearPattern = /^\d{4}\/\d{4}$/;
+    function showErr(id, msg) {
+        var el = document.getElementById('err-' + id);
+        if (el) { el.textContent = msg; el.classList.add('visible'); }
+        var inp = document.getElementById('id_' + id);
+        if (inp) inp.style.borderColor = '#dc2626';
+    }
+    function clearErr(id) {
+        var el = document.getElementById('err-' + id);
+        if (el) { el.textContent = ''; el.classList.remove('visible'); }
+        var inp = document.getElementById('id_' + id);
+        if (inp) inp.style.borderColor = '';
+    }
+    function validateYear(input) {
+        var val = input.value.trim();
+        if (!val) { showErr('academic_year', 'Academic year is required.'); return false; }
+        if (!yearPattern.test(val)) { showErr('academic_year', 'Use format YYYY/YYYY+1, e.g. 2026/2027.'); return false; }
+        var parts = val.split('/');
+        var sy = parseInt(parts[0]), ey = parseInt(parts[1]);
+        if (ey !== sy + 1) { showErr('academic_year', 'Years must be consecutive, e.g. 2026/2027.'); return false; }
+        var now = new Date().getFullYear();
+        if (sy < now) { showErr('academic_year', 'Academic year cannot be in the past (min: ' + now + '/' + (now+1) + ').'); return false; }
+        clearErr('academic_year'); return true;
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var teacherSel  = document.getElementById('id_teacher');
+        var subjectSel  = document.getElementById('id_class_subject');
+        var yearInp     = document.getElementById('id_academic_year');
+        if (teacherSel) teacherSel.addEventListener('change', function() {
+            if (!this.value) showErr('teacher', 'Please select a teacher.'); else clearErr('teacher');
+        });
+        if (subjectSel) subjectSel.addEventListener('change', function() {
+            if (!this.value) showErr('class_subject', 'Please select a class & subject.'); else clearErr('class_subject');
+        });
+        if (yearInp) {
+            yearInp.addEventListener('input', function() { validateYear(this); });
+            yearInp.addEventListener('blur',  function() { validateYear(this); });
+        }
+        document.getElementById('assign-subject-form').addEventListener('submit', function(e) {
+            var ok = true;
+            if (teacherSel && !teacherSel.value)  { showErr('teacher', 'Please select a teacher.'); ok = false; }
+            if (subjectSel && !subjectSel.value)   { showErr('class_subject', 'Please select a class & subject.'); ok = false; }
+            if (yearInp && !validateYear(yearInp)) ok = false;
+            if (!ok) e.preventDefault();
+        });
+    });
+})();
+</script>
 {% endblock %}

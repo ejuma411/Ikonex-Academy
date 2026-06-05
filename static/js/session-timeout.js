@@ -54,5 +54,19 @@ document.addEventListener('keypress', resetTimer);
 document.addEventListener('mousemove', resetTimer);
 document.addEventListener('scroll', resetTimer);
 
+// Auto-dismiss messages after 4 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const messages = document.querySelectorAll('.alert');
+    messages.forEach(function(message) {
+        setTimeout(function() {
+            message.style.transition = 'opacity 0.5s';
+            message.style.opacity = '0';
+            setTimeout(function() {
+                message.remove();
+            }, 500);
+        }, 4000); // 4 seconds
+    });
+});
+
 // Start timer on page load
 startSessionTimer();

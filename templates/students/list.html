@@ -1,62 +1,363 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block title %}Students | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Students</h1>
-        <p class="page-subtitle">Manage enrolled students across all class streams.</p>
-    </div>
-    <a href="{% url 'student_create' %}" class="btn btn-primary">
-        <i class="bi bi-person-plus me-1"></i> Add Student
-    </a>
-</div>
+<style>
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Students - Matches Student Performance Report
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
+    }
+    
+    .page-subtitle {
+        color: var(--gray-500);
+        margin: 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Buttons */
+    .btn-primary {
+        background: var(--accent-primary);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-primary:hover {
+        background: #0f3b6b;
+        transform: translateY(-1px);
+    }
+    
+    /* Table Container */
+    .table-container {
+        background: white;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+        overflow-x: auto;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    
+    .data-table th {
+        background: var(--gray-50);
+        padding: 0.875rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-200);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .data-table td {
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid var(--gray-100);
+        color: var(--gray-700);
+        vertical-align: middle;
+    }
+    
+    .data-table tr:hover {
+        background: var(--gray-50);
+    }
+    
+    .data-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Admission Number Badge */
+    .admission-badge {
+        display: inline-block;
+        background: var(--gray-100);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+        font-family: monospace;
+    }
+    
+    /* Student Name */
+    .student-name {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .student-avatar {
+        width: 32px;
+        height: 32px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    /* Class Badge */
+    .class-badge {
+        display: inline-block;
+        background: #dcfce7;
+        color: #15803d;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-view {
+        background: transparent;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-view:hover {
+        background: var(--accent-primary);
+        color: white;
+    }
+    
+    .btn-edit {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-600);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-edit:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-400);
+    }
+    
+    .btn-delete {
+        background: transparent;
+        border: 1px solid #fecaca;
+        color: var(--accent-red);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-delete:hover {
+        background: #fef2f2;
+        border-color: #f87171;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--gray-300);
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .empty-state p {
+        margin: 0.5rem 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Footer */
+    .page-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-view, .btn-edit, .btn-delete {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .student-name {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
 
-<div class="app-table-wrap">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Admission No</th>
-                <th>Full Name</th>
-                <th>Class Stream</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for s in students %}
-            <tr>
-                <td><span class="fw-600 text-brand">{{ s.admission_no }}</span></td>
-                <td>{{ s.first_name }} {{ s.last_name }}</td>
-                <td><span class="badge bg-light text-dark border">{{ s.class_stream.name }}</span></td>
-                <td>
-                    <div class="tbl-actions">
-                        <a href="{% url 'student_detail' s.id %}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-eye"></i> View
-                        </a>
-                        <a href="{% url 'student_update' s.id %}" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-pencil"></i> Edit
-                        </a>
-                        <a href="{% url 'student_delete' s.id %}" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">
-                    <div class="empty-state">
+<div class="container-fluid px-3 px-md-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="bi bi-people me-2" style="color: var(--accent-primary);"></i>
+                Students
+            </h1>
+            <p class="page-subtitle">Manage enrolled students across all class streams.</p>
+        </div>
+        <a href="{% url 'student_create' %}" class="btn-primary">
+            <i class="bi bi-person-plus"></i> Add Student
+        </a>
+    </div>
+    
+    <!-- Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Admission No</th>
+                    <th>Full Name</th>
+                    <th>Class Stream</th>
+                    <th style="width: 200px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td>
+                        <span class="admission-badge">{{ s.admission_no|default:"PENDING" }}</span>
+                    </span>
+                    <td>
+                        <div class="student-name">
+                            <div class="student-avatar">
+                                {{ s.first_name|first|upper }}{{ s.last_name|first|upper }}
+                            </div>
+                            {{ s.first_name }} {{ s.last_name }}
+                        </div>
+                    </span>
+                    <td>
+                        <span class="class-badge">
+                            <i class="bi bi-building me-1"></i> {{ s.class_stream.name|default:"Not Assigned" }}
+                        </span>
+                    </span>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{% url 'student_detail' s.id %}" class="btn-view">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                            <a href="{% url 'student_update' s.id %}" class="btn-edit">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a href="{% url 'student_delete' s.id %}" class="btn-delete" onclick="return confirm('Are you sure you want to delete {{ s.first_name }} {{ s.last_name }}?');">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </div>
+                    </span>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="empty-state">
                         <i class="bi bi-people"></i>
                         <p>No students registered yet.</p>
-                        <a href="{% url 'student_create' %}" class="btn btn-primary btn-sm mt-2">Add First Student</a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                        <a href="{% url 'student_create' %}" class="btn-primary" style="display: inline-flex; margin-top: 0.5rem;">
+                            <i class="bi bi-person-plus"></i> Add First Student
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Footer -->
+    <div class="page-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Records — Ikonex Academy
+    </div>
 </div>
 
 {% endblock %}

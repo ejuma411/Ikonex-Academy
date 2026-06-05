@@ -1,64 +1,417 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block title %}Scores | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Scores</h1>
-        <p class="page-subtitle">All recorded student scores across assessments.</p>
-    </div>
-    <a href="{% url 'score_create' %}" class="btn btn-primary">
-        <i class="bi bi-clipboard-plus me-1"></i> Add Score
-    </a>
-</div>
+<style>
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Scores - Matches Student Performance Report
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
+    }
+    
+    .page-subtitle {
+        color: var(--gray-500);
+        margin: 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 0.25rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        font-size: 0.8rem;
+    }
+    
+    .btn-primary {
+        background: var(--accent-primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #0f3b6b;
+        transform: translateY(-1px);
+    }
+    
+    .btn-sm {
+        padding: 0.3rem 0.75rem;
+        font-size: 0.7rem;
+    }
+    
+    /* Table Container */
+    .table-container {
+        background: white;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+        overflow-x: auto;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    
+    .data-table th {
+        background: var(--gray-50);
+        padding: 0.875rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-200);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .data-table td {
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid var(--gray-100);
+        color: var(--gray-700);
+        vertical-align: middle;
+    }
+    
+    .data-table tr:hover {
+        background: var(--gray-50);
+    }
+    
+    .data-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Student Name */
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .student-avatar {
+        width: 32px;
+        height: 32px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    /* Subject Badge */
+    .subject-badge {
+        display: inline-block;
+        background: var(--gray-100);
+        color: var(--gray-700);
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    /* Assessment Badge */
+    .assessment-badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    /* Score Badge */
+    .score-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-align: center;
+        min-width: 60px;
+    }
+    
+    .score-high {
+        background: #dcfce7;
+        color: #15803d;
+    }
+    
+    .score-medium {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .score-low {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-view {
+        background: transparent;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-view:hover {
+        background: var(--accent-primary);
+        color: white;
+    }
+    
+    .btn-edit {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-600);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-edit:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-400);
+    }
+    
+    .btn-delete {
+        background: transparent;
+        border: 1px solid #fecaca;
+        color: var(--accent-red);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-delete:hover {
+        background: #fef2f2;
+        border-color: #f87171;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--gray-300);
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .empty-state p {
+        margin: 0.5rem 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Footer */
+    .page-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-view, .btn-edit, .btn-delete {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .student-info {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
 
-<div class="app-table-wrap">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Student</th>
-                <th>Subject</th>
-                <th>Assessment</th>
-                <th>Marks</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for s in scores %}
-            <tr>
-                <td class="fw-500">{{ s.student.first_name }} {{ s.student.last_name }}</td>
-                <td>{{ s.subject.name }}</td>
-                <td>{{ s.assessment.name }}</td>
-                <td><span class="badge bg-light text-dark border fw-600">{{ s.marks }}</span></td>
-                <td>
-                    <div class="tbl-actions">
-                        <a href="{% url 'score_detail' s.id %}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        <a href="{% url 'score_update' s.id %}" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <a href="{% url 'score_delete' s.id %}" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5">
-                    <div class="empty-state">
+<div class="container-fluid px-3 px-md-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="bi bi-clipboard-data me-2" style="color: var(--accent-primary);"></i>
+                Scores
+            </h1>
+            <p class="page-subtitle">All recorded student scores across assessments.</p>
+        </div>
+        <a href="{% url 'score_create' %}" class="btn btn-primary">
+            <i class="bi bi-clipboard-plus"></i> Add Score
+        </a>
+    </div>
+    
+    <!-- Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Subject</th>
+                    <th>Assessment</th>
+                    <th>Marks</th>
+                    <th style="width: 140px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in scores %}
+                <tr>
+                    <td>
+                        <div class="student-info">
+                            <div class="student-avatar">
+                                {{ s.student.first_name|first|upper }}{{ s.student.last_name|first|upper }}
+                            </div>
+                            {{ s.student.first_name }} {{ s.student.last_name }}
+                        </div>
+                    </span>
+                    <td>
+                        <span class="subject-badge">
+                            <i class="bi bi-book me-1"></i> {{ s.subject.name }}
+                        </span>
+                    </span>
+                    <td>
+                        <span class="assessment-badge">
+                            <i class="bi bi-journal-text me-1"></i> {{ s.assessment.name }}
+                        </span>
+                    </span>
+                    <td>
+                        {% with marks=s.marks|default:0 %}
+                            {% if marks >= 80 %}
+                                <span class="score-badge score-high">
+                                    <i class="bi bi-star-fill"></i> {{ marks }}
+                                </span>
+                            {% elif marks >= 50 %}
+                                <span class="score-badge score-medium">
+                                    <i class="bi bi-check-circle"></i> {{ marks }}
+                                </span>
+                            {% else %}
+                                <span class="score-badge score-low">
+                                    <i class="bi bi-exclamation-triangle"></i> {{ marks }}
+                                </span>
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{% url 'score_detail' s.id %}" class="btn-view">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'score_update' s.id %}" class="btn-edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'score_delete' s.id %}" class="btn-delete" onclick="return confirm('Are you sure you want to delete this score?');">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </span>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty-state">
                         <i class="bi bi-clipboard-data"></i>
                         <p>No scores recorded yet.</p>
-                        <a href="{% url 'score_create' %}" class="btn btn-primary btn-sm mt-2">Add First Score</a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                        <a href="{% url 'score_create' %}" class="btn btn-primary" style="display: inline-flex; margin-top: 0.5rem;">
+                            <i class="bi bi-clipboard-plus"></i> Add First Score
+                        </a>
+                    </span>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Footer -->
+    <div class="page-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Records — Ikonex Academy
+    </div>
 </div>
 
 {% endblock %}

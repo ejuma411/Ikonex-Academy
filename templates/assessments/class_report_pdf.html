@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Class Performance Report - {{ class_stream.name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+        
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #1a1a2e;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1a4d8c;
+        }
+        
+        .school-name {
+            font-size: 22pt;
+            font-weight: bold;
+            color: #1a4d8c;
+            letter-spacing: 2px;
+        }
+        
+        .school-motto {
+            font-size: 8pt;
+            color: #666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .report-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1a4d8c;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+        
+        /* Info Grid */
+        .info-grid {
+            display: table;
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+        
+        .info-row {
+            display: table-row;
+        }
+        
+        .info-cell {
+            display: table-cell;
+            text-align: center;
+            padding: 10px;
+            border-right: 1px solid #e2e8f0;
+        }
+        
+        .info-cell:last-child {
+            border-right: none;
+        }
+        
+        .info-label {
+            font-size: 7pt;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+        
+        .info-value {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #1e293b;
+            margin-top: 3px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .stats-row {
+            display: table-row;
+        }
+        
+        .stat-cell {
+            display: table-cell;
+            text-align: center;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-number {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #1a4d8c;
+        }
+        
+        .stat-label {
+            font-size: 7pt;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        /* Section Title */
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #1e293b;
+            margin: 20px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #1a4d8c;
+        }
+        
+        /* Table */
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .ranking-table th {
+            background: #1a4d8c;
+            color: white;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 8pt;
+        }
+        
+        .ranking-table td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 8pt;
+        }
+        
+        .ranking-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        /* Grade badges */
+        .grade-A, .grade-A- { background: #dcfce7; color: #15803d; font-weight: bold; }
+        .grade-B, .grade-B- { background: #dbeafe; color: #1e40af; font-weight: bold; }
+        .grade-C, .grade-C- { background: #fef9c3; color: #854d0e; font-weight: bold; }
+        .grade-D, .grade-D- { background: #ffedd5; color: #9a3412; font-weight: bold; }
+        .grade-E, .grade-F { background: #fee2e2; color: #b91c1c; font-weight: bold; }
+        
+        /* Subject Tags */
+        .subject-tags {
+            margin: 10px 0;
+        }
+        
+        .subject-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 8pt;
+            margin: 3px;
+        }
+        
+        /* Signatures */
+        .signatures {
+            margin-top: 40px;
+            display: table;
+            width: 100%;
+        }
+        
+        .sign-row {
+            display: table-row;
+        }
+        
+        .sign-cell {
+            display: table-cell;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        .sign-line {
+            border-top: 0.5px solid #1a4d8c;
+            margin-top: 30px;
+            margin-bottom: 5px;
+        }
+        
+        .sign-label {
+            font-size: 8pt;
+            color: #64748b;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 7pt;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="school-name">IKONEX ACADEMY</div>
+    <div class="school-motto">EXCELLENCE IN EDUCATION</div>
+    <div class="report-title">ACADEMIC PERFORMANCE REPORT</div>
+</div>
+
+<!-- Info Grid -->
+<div class="info-grid">
+    <div class="info-row">
+        <div class="info-cell">
+            <div class="info-label">CLASS STREAM</div>
+            <div class="info-value">{{ class_stream.name }}</div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">ACADEMIC YEAR</div>
+            <div class="info-value">{{ current_date|date:"Y" }}/{{ current_date|date:"Y"|add:"1" }}</div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">TERM</div>
+            <div class="info-value">Term 2</div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">REPORT DATE</div>
+            <div class="info-value">{{ current_date|date:"d/m/Y" }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stats-row">
+        <div class="stat-cell">
+            <div class="stat-number">{{ total_students|default:"0" }}</div>
+            <div class="stat-label">TOTAL ENROLLED</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-number">{{ class_average|default:"0" }}%</div>
+            <div class="stat-label">CLASS AVERAGE</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-number">{{ highest_score|default:"0" }}</div>
+            <div class="stat-label">HIGHEST AGGREGATE</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-number">{{ pass_count|default:"0" }}/{{ total_students|default:"0" }}</div>
+            <div class="stat-label">PROFICIENCY RATE</div>
+        </div>
+    </div>
+</div>
+
+<!-- Ranking Table -->
+<div class="section-title">STUDENT RANKING & PERFORMANCE</div>
+
+<table class="ranking-table">
+    <thead>
+        <tr>
+            <th>RANK</th>
+            <th>STUDENT NAME</th>
+            <th>ADMISSION NO</th>
+            <th>TOTAL MARKS</th>
+            <th>PERCENTAGE</th>
+            <th>GRADE</th>
+            <th>REMARK</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in ranking %}
+        <tr>
+            <td>{{ item.position }}{% if item.position == 1 %}st{% elif item.position == 2 %}nd{% elif item.position == 3 %}rd{% else %}th{% endif %}</td>
+            <td style="text-align: left;">{{ item.student.first_name }} {{ item.student.last_name }}</td>
+            <td>{{ item.student.admission_no|default:"-" }}</td>
+            <td>{{ item.total|floatformat:1 }}</td>
+            <td>{{ item.average|floatformat:1 }}%</td>
+            <td><span class="grade-{{ item.grade }}">{{ item.grade|default:"N/A" }}</span></td>
+            <td>
+                {% if item.grade == 'A' or item.grade == 'A-' %}Excellent
+                {% elif item.grade == 'B+' or item.grade == 'B' or item.grade == 'B-' %}Good
+                {% elif item.grade == 'C+' or item.grade == 'C' or item.grade == 'C-' %}Satisfactory
+                {% elif item.grade == 'D+' or item.grade == 'D' or item.grade == 'D-' %}Below Average
+                {% elif item.grade == 'E' or item.grade == 'F' %}Needs Improvement
+                {% else %}—
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align: center;">No records found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Subject Analysis -->
+<div class="section-title">SUBJECT ANALYSIS</div>
+<div class="subject-tags">
+    {% for sub in subjects %}
+    <span class="subject-tag">{{ sub.subject.name }}</span>
+    {% endfor %}
+</div>
+
+<!-- Signatures -->
+<div class="signatures">
+    <div class="sign-row">
+        <div class="sign-cell">
+            <div class="sign-line"></div>
+            <div class="sign-label">CLASS TEACHER</div>
+        </div>
+        <div class="sign-cell">
+            <div class="sign-line"></div>
+            <div class="sign-label">PRINCIPAL / HEAD OF SCHOOL</div>
+        </div>
+        <div class="sign-cell">
+            <div class="sign-line"></div>
+            <div class="sign-label">DATE</div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    Generated on {{ current_date|date:"F j, Y" }} at {{ current_date|time:"g:i A" }} | Official Academic Record — IKONEX ACADEMY
+</div>
+
+</body>
+</html>

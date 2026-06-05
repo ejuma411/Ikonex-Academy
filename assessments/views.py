@@ -1,4 +1,11 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponse
+from django.utils import timezone
+from io import BytesIO
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+import os
+from django.conf import settings
 
 from accounts.decorators import staff_required
 from assessments.forms import AssessmentForm, GradeScaleForm, ScoreForm
@@ -6,6 +13,34 @@ from assessments.models import Assessment, GradeScale, Score
 from assessments.results import class_ranking, class_subject_ranking, student_result
 from classes.models import ClassStream
 from students.models import Student
+
+
+def render_to_pdf(template_src, context_dict={}):
+    """Convert HTML template to PDF"""
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    
+    def link_callback(uri, rel):
+        """Handle static files in PDF"""
+        if uri.startswith('http'):
+            return uri
+        if uri.startswith('/static/'):
+            path = os.path.join(settings.BASE_DIR, 'static', uri.replace('/static/', ''))
+            if os.path.exists(path):
+                return path
+        return uri
+    
+    pdf = pisa.pisaDocument(
+        BytesIO(html.encode("UTF-8")), 
+        result,
+        encoding='UTF-8',
+        link_callback=link_callback
+    )
+    
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
 
 
 @staff_required
@@ -133,16 +168,10 @@ def class_result_view(request, class_id):
     
     # Calculate statistics for the template
     if ranking:
-        # Class average (average of all students' averages)
         total_average = sum(item.get('average', 0) for item in ranking)
         class_average = round(total_average / len(ranking), 1) if ranking else 0
-        
-        # Highest total score
         highest_score = max(item.get('total', 0) for item in ranking) if ranking else 0
-        
-        # Pass rate (students not failing)
-        pass_count = sum(1 for item in ranking if item.get('grade') != 'F')
-        
+        pass_count = sum(1 for item in ranking if item.get('grade') not in ['E', 'F', 'N/A'])
         total_students = len(ranking)
     else:
         class_average = 0
@@ -157,13 +186,56 @@ def class_result_view(request, class_id):
             "class_stream": class_stream,
             "ranking": ranking,
             "subjects": subjects,
-            # Add these for the stats cards
             "total_students": total_students,
             "class_average": class_average,
             "highest_score": highest_score,
             "pass_count": pass_count,
+            "current_date": timezone.now(),
         },
     )
+
+
+@staff_required
+def class_report_pdf(request, class_id):
+    """Generate PDF report for a class"""
+    result = class_ranking(class_id)
+    class_stream = result["class_stream"]
+    ranking = result["ranking"]
+    subjects = class_stream.class_subjects.select_related("subject").all()
+    
+    # Calculate statistics for the template
+    if ranking:
+        total_average = sum(item.get('average', 0) for item in ranking)
+        class_average = round(total_average / len(ranking), 1) if ranking else 0
+        highest_score = max(item.get('total', 0) for item in ranking) if ranking else 0
+        pass_count = sum(1 for item in ranking if item.get('grade') not in ['E', 'F', 'N/A'])
+        total_students = len(ranking)
+    else:
+        class_average = 0
+        highest_score = 0
+        pass_count = 0
+        total_students = 0
+    
+    context = {
+        "class_stream": class_stream,
+        "ranking": ranking,
+        "subjects": subjects,
+        "total_students": total_students,
+        "class_average": class_average,
+        "highest_score": highest_score,
+        "pass_count": pass_count,
+        "current_date": timezone.now(),
+        "school_name": "IKONEX ACADEMY",
+    }
+    
+    pdf = render_to_pdf('reports/class_report_pdf.html', context)
+    
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="class_report_{class_stream.name}_{timezone.now().strftime("%Y%m%d")}.pdf"'
+        return response
+    
+    return HttpResponse("Error generating PDF", status=500)
 
 
 @staff_required

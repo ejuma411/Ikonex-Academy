@@ -90,22 +90,29 @@
     </div>
     
     <div class="form-container">
-        <form method="post">
+        <form method="post" id="user-form" novalidate>
             {% csrf_token %}
             
             {% for field in form %}
-            <div class="form-group">
-                <label class="form-label">{{ field.label }}</label>
+            <div class="form-group" id="grp-{{ field.html_name }}">
+                <label class="form-label">{{ field.label }}{% if field.field.required %} <span style="color:#dc2626">*</span>{% endif %}</label>
                 {{ field }}
                 {% if field.help_text %}
                     <div class="form-text">{{ field.help_text }}</div>
                 {% endif %}
                 {% if field.errors %}
-                    <div class="errorlist">{{ field.errors }}</div>
+                    <div class="errorlist field-inline-err" style="color:#dc2626;font-size:0.75rem;margin-top:0.25rem;">{{ field.errors|striptags }}</div>
+                {% else %}
+                    <div class="field-inline-err" style="color:#dc2626;font-size:0.75rem;margin-top:0.25rem;display:none;"></div>
                 {% endif %}
             </div>
             {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" style="margin-top:1rem;">{{ form.non_field_errors }}</div>
+            {% endif %}
             
+            <!-- Issue #7: Cancel always active as plain <a> tag -->
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> {{ title }}
@@ -115,4 +122,66 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* Real-time validation for User form (Issue #5) */
+(function() {
+    function showErr(grpId, msg) {
+        var grp = document.getElementById('grp-' + grpId);
+        if (!grp) return;
+        var el = grp.querySelector('.field-inline-err');
+        if (el) { el.textContent = msg; el.style.display = 'block'; }
+        var inp = grp.querySelector('input, select, textarea');
+        if (inp) inp.style.borderColor = '#dc2626';
+    }
+    function clearErr(grpId) {
+        var grp = document.getElementById('grp-' + grpId);
+        if (!grp) return;
+        var el = grp.querySelector('.field-inline-err');
+        if (el) { el.textContent = ''; el.style.display = 'none'; }
+        var inp = grp.querySelector('input, select, textarea');
+        if (inp) inp.style.borderColor = '';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        /* Required text/email fields */
+        ['first_name','last_name','email','username'].forEach(function(f) {
+            var inp = document.getElementById('id_' + f);
+            if (!inp) return;
+            inp.addEventListener('blur', function() {
+                if (!this.value.trim()) showErr(f, this.labels[0]?.textContent.replace('*','').trim() + ' is required.');
+                else clearErr(f);
+            });
+        });
+
+        /* Password match */
+        var pw1 = document.getElementById('id_password');
+        var pw2 = document.getElementById('id_confirm_password');
+        function checkPasswords() {
+            if (pw1 && pw2 && pw2.value && pw1.value !== pw2.value) {
+                showErr('confirm_password', 'Passwords do not match.');
+            } else if (pw2 && pw2.value) {
+                clearErr('confirm_password');
+            }
+        }
+        if (pw1) pw1.addEventListener('input', checkPasswords);
+        if (pw2) pw2.addEventListener('input', checkPasswords);
+
+        /* Hire date: no future dates (Issue #9) */
+        var hireDate = document.getElementById('id_hire_date');
+        if (hireDate) {
+            hireDate.addEventListener('change', function() {
+                var today = new Date().toISOString().split('T')[0];
+                if (this.value > today) {
+                    showErr('hire_date', 'Hire date cannot be in the future.');
+                    this.value = today;
+                } else {
+                    clearErr('hire_date');
+                }
+            });
+        }
+    });
+})();
+</script>
 {% endblock %}

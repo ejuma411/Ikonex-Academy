@@ -6,28 +6,51 @@
 {% block content %}
 
 <style>
-    /* Professional styling for Subjects page */
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Subjects - Matches Student Performance Report
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section */
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         flex-wrap: wrap;
         gap: 1rem;
     }
     
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
         font-weight: 700;
         margin: 0 0 0.25rem 0;
-        color: #1e293b;
-        letter-spacing: -0.02em;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
     }
     
     .page-subtitle {
-        color: #64748b;
+        color: var(--gray-500);
         margin: 0;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
     /* Buttons */
@@ -35,246 +58,309 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1.25rem;
+        padding: 0.5rem 1rem;
         font-weight: 500;
-        border-radius: 0.5rem;
+        border-radius: 0.25rem;
         text-decoration: none;
         cursor: pointer;
         transition: all 0.2s;
         border: none;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
     
     .btn-primary {
-        background: #0f766e;
+        background: var(--accent-primary);
         color: white;
     }
     
     .btn-primary:hover {
-        background: #0b5e58;
+        background: #0f3b6b;
         transform: translateY(-1px);
     }
     
     .btn-outline-primary {
         background: transparent;
-        border: 1px solid #0f766e;
-        color: #0f766e;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
     }
     
     .btn-outline-primary:hover {
-        background: #0f766e;
+        background: var(--accent-primary);
         color: white;
     }
     
-    .btn-outline-secondary {
-        background: transparent;
-        border: 1px solid #cbd5e1;
-        color: #475569;
-    }
-    
-    .btn-outline-secondary:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
-    }
-    
-    .btn-outline-danger {
-        background: transparent;
-        border: 1px solid #fecaca;
-        color: #dc2626;
-    }
-    
-    .btn-outline-danger:hover {
-        background: #fef2f2;
-        border-color: #f87171;
-    }
-    
     .btn-sm {
-        padding: 0.3rem 0.8rem;
-        font-size: 0.75rem;
+        padding: 0.3rem 0.75rem;
+        font-size: 0.7rem;
     }
     
-    /* Table styling */
-    .app-table-wrap {
-        background: #ffffff;
-        border-radius: 1rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 25px -5px rgba(0,0,0,0.05);
-        border: 1px solid #e2e8f0;
+    /* Table Container */
+    .table-container {
+        background: white;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
         overflow-x: auto;
+        box-shadow: var(--shadow-sm);
     }
     
-    .table {
+    .data-table {
         width: 100%;
         border-collapse: collapse;
-        margin: 0;
-        min-width: 500px;
+        font-size: 0.85rem;
     }
     
-    .table thead th {
-        background: #f8fafc;
-        padding: 1rem 1.25rem;
+    .data-table th {
+        background: var(--gray-50);
+        padding: 0.875rem 1rem;
         text-align: left;
         font-weight: 600;
-        color: #1e293b;
-        border-bottom: 1px solid #e2e8f0;
-        font-size: 0.875rem;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-200);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
-    .table tbody td {
-        padding: 1rem 1.25rem;
-        border-bottom: 1px solid #f1f5f9;
-        color: #334155;
+    .data-table td {
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid var(--gray-100);
+        color: var(--gray-700);
         vertical-align: middle;
     }
     
-    .table tbody tr:hover {
-        background: #f8fafc;
+    .data-table tr:hover {
+        background: var(--gray-50);
     }
     
-    .table tbody tr:last-child td {
+    .data-table tbody tr:last-child td {
         border-bottom: none;
     }
     
-    /* Badge styling */
-    .badge {
+    /* Subject Code Badge */
+    .code-badge {
         display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 2rem;
+        background: var(--gray-100);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
         font-size: 0.75rem;
-        font-weight: 500;
-    }
-    
-    .bg-light {
-        background: #f1f5f9;
-    }
-    
-    .text-dark {
-        color: #1e293b;
-    }
-    
-    .border {
-        border: 1px solid #e2e8f0;
-    }
-    
-    .fw-600 {
         font-weight: 600;
+        color: var(--accent-primary);
+        font-family: monospace;
+        letter-spacing: 0.5px;
     }
     
-    .fw-500 {
-        font-weight: 500;
+    /* Subject Name */
+    .subject-name {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
-    /* Action buttons container */
-    .tbl-actions {
+    .subject-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--gray-100);
+        border-radius: 0.375rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-primary);
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
     }
     
-    /* Empty state styling */
+    .btn-view {
+        background: transparent;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-view:hover {
+        background: var(--accent-primary);
+        color: white;
+    }
+    
+    .btn-edit {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-600);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-edit:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-400);
+    }
+    
+    .btn-delete {
+        background: transparent;
+        border: 1px solid #fecaca;
+        color: var(--accent-red);
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-delete:hover {
+        background: #fef2f2;
+        border-color: #f87171;
+    }
+    
+    /* Empty State */
     .empty-state {
         text-align: center;
         padding: 3rem 2rem;
-        color: #64748b;
+        color: var(--gray-500);
     }
     
     .empty-state i {
         font-size: 3rem;
-        color: #cbd5e1;
+        color: var(--gray-300);
         margin-bottom: 1rem;
-        display: inline-block;
+        display: block;
     }
     
     .empty-state p {
         margin: 0.5rem 0;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Footer */
+    .page-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
     }
     
     /* Responsive */
     @media (max-width: 640px) {
-        .page-title {
-            font-size: 1.4rem;
-        }
-        
-        .btn {
-            padding: 0.4rem 1rem;
-            font-size: 0.8rem;
-        }
-        
-        .table thead th,
-        .table tbody td {
-            padding: 0.75rem 1rem;
-        }
-        
-        .tbl-actions {
+        .page-header {
             flex-direction: column;
-            gap: 0.35rem;
+            align-items: flex-start;
         }
         
-        .btn-sm {
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-view, .btn-edit, .btn-delete {
             width: 100%;
-            text-align: center;
             justify-content: center;
+        }
+        
+        .subject-name {
+            flex-direction: column;
+            align-items: flex-start;
         }
     }
 </style>
 
 <div class="container-fluid px-3 px-md-4">
+    <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1 class="page-title">Subjects</h1>
+            <h1 class="page-title">
+                <i class="bi bi-book me-2" style="color: var(--accent-primary);"></i>
+                Subjects
+            </h1>
             <p class="page-subtitle">Manage school subjects and class assignments.</p>
         </div>
         <div class="d-flex gap-2">
             <a href="{% url 'assign_subject' %}" class="btn btn-outline-primary">
-                <i class="bi bi-diagram-3 me-1"></i> Assign Subject
+                <i class="bi bi-diagram-3"></i> Assign Subject
             </a>
             <a href="{% url 'subject_create' %}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i> Add Subject
+                <i class="bi bi-plus-circle"></i> Add Subject
             </a>
         </div>
     </div>
-
-    <div class="app-table-wrap">
-        <table class="table table-hover">
+    
+    <!-- Table -->
+    <div class="table-container">
+        <table class="data-table">
             <thead>
                 <tr>
-                    <th>Code</th>
+                    <th style="width: 120px;">Code</th>
                     <th>Subject Name</th>
-                    <th>Actions</th>
+                    <th style="width: 200px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for s in subjects %}
                 <tr>
-                    <td><span class="badge bg-light text-dark border fw-600">{{ s.code }}</span></td>
-                    <td class="fw-500">{{ s.name }}</td>
                     <td>
-                        <div class="tbl-actions">
-                            <a href="{% url 'subject_detail' s.id %}" class="btn btn-sm btn-outline-primary">
+                        <span class="code-badge">{{ s.code|default:"N/A" }}</span>
+                    </span>
+                    <td class="subject-name">
+                        <span class="subject-icon">
+                            <i class="bi bi-book"></i>
+                        </span>
+                        {{ s.name }}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{% url 'subject_detail' s.id %}" class="btn-view">
                                 <i class="bi bi-eye"></i> View
                             </a>
-                            <a href="{% url 'subject_update' s.id %}" class="btn btn-sm btn-outline-secondary">
+                            <a href="{% url 'subject_update' s.id %}" class="btn-edit">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
-                            <a href="{% url 'subject_delete' s.id %}" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i>
+                            <a href="{% url 'subject_delete' s.id %}" class="btn-delete" onclick="return confirm('Are you sure you want to delete {{ s.name }}?');">
+                                <i class="bi bi-trash"></i> Delete
                             </a>
                         </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3">
-                        <div class="empty-state">
-                            <i class="bi bi-book"></i>
-                            <p>No subjects added yet.</p>
-                            <a href="{% url 'subject_create' %}" class="btn btn-primary btn-sm mt-2">Add First Subject</a>
-                        </div>
+                    <td colspan="3" class="empty-state">
+                        <i class="bi bi-book"></i>
+                        <p>No subjects added yet.</p>
+                        <a href="{% url 'subject_create' %}" class="btn btn-primary" style="display: inline-flex; margin-top: 0.5rem;">
+                            <i class="bi bi-plus-circle"></i> Add First Subject
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+    
+    <!-- Footer -->
+    <div class="page-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Records — Ikonex Academy
     </div>
 </div>
 

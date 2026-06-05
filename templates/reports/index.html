@@ -6,181 +6,221 @@
 {% block content %}
 
 <style>
-    /* Professional styling for Reports page */
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Based on the screenshot design
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section - Official Seal Style */
     .page-header {
-        margin-bottom: 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px double var(--accent-primary);
+    }
+    
+    .school-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        letter-spacing: 2px;
+        font-family: 'Georgia', 'Times New Roman', serif;
+        margin-bottom: 0.25rem;
+    }
+    
+    .school-tagline {
+        font-size: 0.8rem;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 3px;
     }
     
     .page-title {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin: 0 0 0.25rem 0;
-        color: #1e293b;
-        letter-spacing: -0.02em;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0.5rem 0 0.25rem 0;
+        color: var(--gray-800);
+        font-family: 'Georgia', serif;
     }
     
     .page-subtitle {
-        color: #64748b;
+        color: var(--gray-500);
         margin: 0;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
-    /* Cards */
-    .report-card {
+    /* Official Report Cards */
+    .official-card {
         background: #ffffff;
-        border-radius: 1rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 25px -5px rgba(0,0,0,0.05);
-        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
         height: 100%;
         overflow: hidden;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: all 0.2s ease;
     }
     
-    .report-card:hover {
-        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+    .official-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
     }
     
-    .card-header-custom {
-        background: #f8fafc;
+    .official-card-header {
+        background: linear-gradient(135deg, var(--accent-primary) 0%, #0f3b6b 100%);
         padding: 1rem 1.25rem;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: none;
     }
     
-    .card-header-custom h5 {
+    .official-card-header h5 {
         margin: 0;
         font-weight: 600;
-        color: #1e293b;
+        color: #ffffff;
         font-size: 1rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        letter-spacing: 0.5px;
     }
     
-    .card-header-custom h5 i {
-        color: #0f766e;
+    .official-card-header h5 i {
         font-size: 1.1rem;
     }
     
-    .card-body-custom {
+    .official-card-body {
         padding: 0;
     }
     
-    /* List group styling */
-    .report-list {
+    /* Official List Styling */
+    .official-list {
         list-style: none;
         margin: 0;
         padding: 0;
     }
     
-    .report-list-item {
+    .official-list-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 1rem 1.25rem;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid var(--gray-100);
         transition: background 0.15s ease;
     }
     
-    .report-list-item:last-child {
+    .official-list-item:last-child {
         border-bottom: none;
     }
     
-    .report-list-item:hover {
+    .official-list-item:hover {
         background: #fafcff;
     }
     
-    .report-info h6 {
+    .student-info h6 {
         font-weight: 600;
         font-size: 0.9rem;
         margin: 0 0 0.25rem 0;
-        color: #1e293b;
+        color: var(--gray-800);
     }
     
-    .report-info p {
+    .student-info p {
         margin: 0;
-        font-size: 0.75rem;
-        color: #64748b;
+        font-size: 0.7rem;
+        color: var(--gray-500);
     }
     
-    .report-info .class-badge {
+    .academic-badge {
         display: inline-block;
-        background: #f1f5f9;
+        background: var(--gray-100);
         padding: 0.2rem 0.5rem;
         border-radius: 0.25rem;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 500;
-        color: #475569;
+        color: var(--gray-600);
     }
     
-    /* Buttons */
+    /* Official Buttons */
+    .btn-view {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.9rem;
+        font-weight: 500;
+        border-radius: 0.25rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.7rem;
+        background: transparent;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
+    }
+    
+    .btn-view:hover {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+        transform: translateY(-1px);
+    }
+    
     .btn-pdf {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.4rem 1rem;
+        padding: 0.35rem 0.9rem;
         font-weight: 500;
-        border-radius: 2rem;
+        border-radius: 0.25rem;
         text-decoration: none;
         transition: all 0.2s;
-        font-size: 0.75rem;
-        background: transparent;
-        border: 1px solid #cbd5e1;
-        color: #475569;
-    }
-    
-    .btn-pdf:hover {
-        background: #fef2f2;
-        border-color: #fecaca;
-        color: #dc2626;
-    }
-    
-    .btn-pdf i {
-        font-size: 0.9rem;
-    }
-    
-    .btn-primary-sm {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.4rem 1rem;
-        font-weight: 500;
-        border-radius: 0.5rem;
-        text-decoration: none;
-        transition: all 0.2s;
-        font-size: 0.75rem;
-        background: #0f766e;
+        font-size: 0.7rem;
+        background: var(--accent-red);
         border: none;
         color: white;
     }
     
-    .btn-primary-sm:hover {
-        background: #0b5e58;
+    .btn-pdf:hover {
+        background: #8b1a1a;
         transform: translateY(-1px);
     }
     
-    /* Empty state */
-    .empty-reports {
+    /* Empty State */
+    .empty-official {
         text-align: center;
-        padding: 2.5rem 1.5rem;
-        color: #64748b;
+        padding: 3rem 1.5rem;
+        color: var(--gray-500);
     }
     
-    .empty-reports i {
-        font-size: 2.5rem;
-        color: #cbd5e1;
-        margin-bottom: 0.75rem;
-        display: inline-block;
+    .empty-official i {
+        font-size: 3rem;
+        color: var(--gray-300);
+        margin-bottom: 1rem;
+        display: block;
     }
     
-    .empty-reports p {
+    .empty-official p {
         margin: 0;
         font-size: 0.85rem;
     }
     
-    /* Count badges */
-    .count-badge {
-        background: #e2e8f0;
-        color: #475569;
+    /* Count Badge */
+    .count-official {
+        background: rgba(255,255,255,0.2);
+        color: #ffffff;
         font-size: 0.7rem;
         padding: 0.15rem 0.5rem;
         border-radius: 1rem;
@@ -188,67 +228,81 @@
         font-weight: 500;
     }
     
+    /* Footer Note */
+    .report-footer-note {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 1rem;
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
-        .page-title {
-            font-size: 1.4rem;
+        .school-name {
+            font-size: 1.5rem;
         }
         
-        .report-list-item {
+        .official-list-item {
             flex-direction: column;
             align-items: flex-start;
             gap: 0.75rem;
         }
         
-        .btn-pdf, .btn-primary-sm {
+        .btn-view, .btn-pdf {
             align-self: flex-start;
         }
     }
 </style>
 
 <div class="container-fluid px-3 px-md-4">
+    <!-- Official Header -->
     <div class="page-header">
-        <div>
-            <h1 class="page-title">
-                <i class="bi bi-file-earmark-pdf-fill me-2" style="color: #dc2626;"></i>
-                Reports
-            </h1>
-            <p class="page-subtitle">Quick access to preview and download school results.</p>
-        </div>
+        <div class="school-name">IKONEX ACADEMY</div>
+        <div class="school-tagline">EXCELLENCE IN EDUCATION</div>
+        <h1 class="page-title">
+            <i class="bi bi-file-text-fill me-2" style="color: var(--accent-primary);"></i>
+            Academic Reports
+        </h1>
+        <p class="page-subtitle">Official student performance records and class summaries</p>
     </div>
 
     <div class="row g-4 mt-1">
         <!-- Class Streams Column -->
         <div class="col-lg-5">
-            <div class="report-card">
-                <div class="card-header-custom">
+            <div class="official-card">
+                <div class="official-card-header">
                     <h5>
-                        <i class="bi bi-diagram-3"></i>
+                        <i class="bi bi-building"></i>
                         Class Streams
-                        <span class="count-badge">{{ class_streams|length }}</span>
+                        <span class="count-official">{{ class_streams|length }}</span>
                     </h5>
                 </div>
-                <div class="card-body-custom">
+                <div class="official-card-body">
                     {% if class_streams %}
-                        <ul class="report-list">
+                        <ul class="official-list">
                             {% for class_stream in class_streams %}
-                                <li class="report-list-item">
-                                    <div class="report-info">
-                                        <h6>{{ class_stream.name }}</h6>
-                                        {% if class_stream.student_count %}
-                                            <p>{{ class_stream.student_count }} student(s) enrolled</p>
-                                        {% endif %}
-                                    </div>
-                                    <a href="{% url class_report_name class_stream.id %}" class="btn-pdf">
+                            <li class="official-list-item">
+                                <div class="student-info">
+                                    <h6>{{ class_stream.name }}</h6>
+                                    <p>{{ class_stream.student_count|default:0 }} enrolled student(s)</p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'class_result' class_stream.id %}" class="btn-view" target="_blank">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                    <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn-pdf">
                                         <i class="bi bi-filetype-pdf"></i> PDF
                                     </a>
-                                </li>
+                                </div>
+                            </li>
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <div class="empty-reports">
+                        <div class="empty-official">
                             <i class="bi bi-folder2-open"></i>
-                            <p>No class streams found.</p>
+                            <p>No class streams registered.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -257,49 +311,55 @@
 
         <!-- Student Reports Column -->
         <div class="col-lg-7">
-            <div class="report-card">
-                <div class="card-header-custom">
+            <div class="official-card">
+                <div class="official-card-header">
                     <h5>
                         <i class="bi bi-person-lines-fill"></i>
-                        Student Reports
-                        <span class="count-badge">{{ students|length }}</span>
+                        Student Records
+                        <span class="count-official">{{ students|length }}</span>
                     </h5>
                 </div>
-                <div class="card-body-custom">
+                <div class="official-card-body">
                     {% if students %}
-                        <ul class="report-list">
+                        <ul class="official-list">
                             {% for student in students %}
-                                <li class="report-list-item">
-                                    <div class="report-info">
-                                        <h6>{{ student.first_name }} {{ student.last_name }}</h6>
-                                        <p>
-                                            {% if student.class_stream %}
-                                                <span class="class-badge">
-                                                    <i class="bi bi-building me-1"></i>{{ student.class_stream.name }}
-                                                </span>
-                                            {% endif %}
-                                            {% if student.admission_no %}
-                                                <span class="class-badge ms-1">
-                                                    <i class="bi bi-hash me-1"></i>{{ student.admission_no }}
-                                                </span>
-                                            {% endif %}
-                                        </p>
-                                    </div>
-                                    <a href="{% url student_report_name student.id %}" class="btn-pdf">
+                            <li class="official-list-item">
+                                <div class="student-info">
+                                    <h6>{{ student.first_name }} {{ student.last_name }}</h6>
+                                    <p>
+                                        <span class="academic-badge">
+                                            <i class="bi bi-building me-1"></i>{{ student.class_stream.name|default:"Ungrouped" }}
+                                        </span>
+                                        <span class="academic-badge ms-1">
+                                            <i class="bi bi-upc-scan me-1"></i>{{ student.admission_no|default:"Pending" }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'student_result' student.id %}" class="btn-view" target="_blank">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                    <a href="{% url 'student_report_pdf' student.id %}" class="btn-pdf">
                                         <i class="bi bi-filetype-pdf"></i> PDF
                                     </a>
-                                </li>
+                                </div>
+                            </li>
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <div class="empty-reports">
+                        <div class="empty-official">
                             <i class="bi bi-person-x"></i>
-                            <p>No students found.</p>
+                            <p>No student records available.</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
         </div>
+    </div>
+    
+    <!-- Official Footer -->
+    <div class="report-footer-note">
+        <i class="bi bi-printer"></i> Official Academic Records — Ikonex Academy
     </div>
 </div>
 

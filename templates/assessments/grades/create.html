@@ -6,44 +6,67 @@
 {% block content %}
 
 <style>
-    /* Professional styling for Add Grade Scale page */
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Add Grade Scale - Matches Student Performance Report
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section */
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         flex-wrap: wrap;
         gap: 1rem;
     }
     
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
         font-weight: 700;
         margin: 0 0 0.25rem 0;
-        color: #1e293b;
-        letter-spacing: -0.02em;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
     }
     
     .page-subtitle {
-        color: #64748b;
+        color: var(--gray-500);
         margin: 0;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
     /* Form Card */
     .form-card {
         background: #ffffff;
-        border-radius: 1rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 25px -5px rgba(0,0,0,0.05);
-        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-md);
+        padding: 1.5rem;
         max-width: 780px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--gray-200);
     }
     
     /* Alert styling */
     .alert {
         padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
+        border-radius: 0.25rem;
         margin-bottom: 1.5rem;
     }
     
@@ -53,14 +76,8 @@
         color: #b91c1c;
     }
     
-    .alert-info {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        color: #1e40af;
-    }
-    
     /* Form field styling */
-    .form-card .form-group {
+    .form-group {
         margin-bottom: 1.25rem;
     }
     
@@ -68,22 +85,27 @@
         display: block;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        color: #1e293b;
-        font-size: 0.875rem;
+        color: var(--gray-700);
+        font-size: 0.8rem;
     }
     
     .form-label i {
-        color: #0f766e;
+        color: var(--accent-primary);
         margin-right: 0.25rem;
+    }
+    
+    .form-label .required-star {
+        color: var(--accent-red);
+        margin-left: 0.25rem;
     }
     
     .form-card input, 
     .form-card select {
         width: 100%;
-        padding: 0.7rem 1rem;
-        border: 1px solid #cbd5e1;
-        border-radius: 0.5rem;
-        font-size: 0.95rem;
+        padding: 0.6rem 0.875rem;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.25rem;
+        font-size: 0.85rem;
         transition: all 0.2s;
         background: #fff;
     }
@@ -91,8 +113,18 @@
     .form-card input:focus, 
     .form-card select:focus {
         outline: none;
-        border-color: #0f766e;
-        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 2px rgba(26, 77, 140, 0.1);
+    }
+    
+    .form-card input.is-invalid,
+    .form-card select.is-invalid {
+        border-color: var(--accent-red);
+    }
+    
+    .form-card input.is-valid,
+    .form-card select.is-valid {
+        border-color: #10b981;
     }
     
     /* Number input specific */
@@ -100,11 +132,16 @@
         -moz-appearance: textfield;
     }
     
+    .form-card input[type="number"]::-webkit-inner-spin-button,
+    .form-card input[type="number"]::-webkit-outer-spin-button {
+        opacity: 0.5;
+    }
+    
     /* Help text styling */
     .helptext {
         display: block;
         font-size: 0.7rem;
-        color: #64748b;
+        color: var(--gray-500);
         margin-top: 0.25rem;
     }
     
@@ -113,23 +150,23 @@
         list-style: none;
         padding: 0;
         margin: 0.25rem 0 0 0;
-        font-size: 0.75rem;
-        color: #dc2626;
+        font-size: 0.7rem;
+        color: var(--accent-red);
     }
     
-    /* Info box */
+    /* Info Box */
     .info-box {
-        background: #f8fafc;
+        background: var(--gray-50);
         border-radius: 0.5rem;
         padding: 1rem;
         margin-bottom: 1.5rem;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--gray-200);
     }
     
     .info-box-title {
         font-weight: 600;
         font-size: 0.8rem;
-        color: #1e293b;
+        color: var(--gray-700);
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -137,23 +174,37 @@
     }
     
     .info-box-title i {
-        color: #0f766e;
+        color: var(--accent-primary);
     }
     
     .info-box-content {
-        font-size: 0.8rem;
-        color: #475569;
+        font-size: 0.75rem;
+        color: var(--gray-600);
         line-height: 1.5;
     }
     
-    .info-box-example {
-        background: #ffffff;
-        border-radius: 0.375rem;
-        padding: 0.5rem;
-        margin-top: 0.5rem;
-        font-family: monospace;
-        font-size: 0.75rem;
-        border: 1px solid #e2e8f0;
+    .grade-table {
+        width: 100%;
+        margin-top: 0.75rem;
+        border-collapse: collapse;
+        font-size: 0.7rem;
+    }
+    
+    .grade-table th,
+    .grade-table td {
+        padding: 0.25rem 0.5rem;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .grade-table th {
+        background: var(--gray-100);
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+    
+    .grade-table tr:last-child td {
+        border-bottom: none;
     }
     
     /* Buttons */
@@ -161,35 +212,45 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.6rem 1.25rem;
+        padding: 0.5rem 1.25rem;
         font-weight: 500;
-        border-radius: 0.5rem;
+        border-radius: 0.25rem;
         text-decoration: none;
         cursor: pointer;
         transition: all 0.2s;
         border: none;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
     
     .btn-primary {
-        background: #0f766e;
+        background: var(--accent-primary);
         color: white;
     }
     
     .btn-primary:hover {
-        background: #0b5e58;
+        background: #0f3b6b;
         transform: translateY(-1px);
     }
     
     .btn-outline-secondary {
         background: transparent;
-        border: 1px solid #cbd5e1;
-        color: #475569;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-600);
     }
     
     .btn-outline-secondary:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
+        background: var(--gray-100);
+        border-color: var(--gray-400);
+    }
+    
+    /* Footer */
+    .page-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
     }
     
     /* Responsive */
@@ -199,35 +260,46 @@
         }
         
         .page-title {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
         }
         
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 1rem;
         }
         
         .row {
             flex-direction: column;
         }
+        
+        .col-md-4 {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
     }
 </style>
 
 <div class="container-fluid px-3 px-md-4">
+    <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1 class="page-title">Add Grade Scale</h1>
+            <h1 class="page-title">
+                <i class="bi bi-percent me-2" style="color: var(--accent-primary);"></i>
+                Add Grade Scale
+            </h1>
             <p class="page-subtitle">Define a new grade range for the grading system.</p>
         </div>
         <a href="{% url 'grade_scale_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back
+            <i class="bi bi-arrow-left"></i> Back
         </a>
     </div>
 
+    <!-- Form Card -->
     <div class="form-card">
         {% if form.non_field_errors %}
             <div class="alert alert-danger mb-3">{{ form.non_field_errors }}</div>
         {% endif %}
         
+        <!-- Info Box -->
         <div class="info-box">
             <div class="info-box-title">
                 <i class="bi bi-info-circle-fill"></i>
@@ -235,10 +307,28 @@
             </div>
             <div class="info-box-content">
                 Define letter grades and their corresponding mark ranges. 
-                Ranges should not overlap and typically cover from 0 to 100.
-                <div class="info-box-example">
-                    <strong>Example:</strong> A (80-100), B (70-79), C (60-69), D (50-59), F (0-49)
-                </div>
+                Ranges should not overlap and must be between 0 and 100.
+                
+                <table class="grade-table">
+                    <thead>
+                        <tr><th>Grade</th><th>Suggested Range</th><th>Meaning</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>80-100</td><td>Excellent</td></tr>
+                        <tr><td>A-</td><td>75-79</td><td>Very Good</td></tr>
+                        <tr><td>B+</td><td>70-74</td><td>Good+</td></tr>
+                        <tr><td>B</td><td>65-69</td><td>Good</td></tr>
+                        <tr><td>B-</td><td>60-64</td><td>Good-</td></tr>
+                        <tr><td>C+</td><td>55-59</td><td>Above Average</td></tr>
+                        <tr><td>C</td><td>45-54</td><td>Average</td></tr>
+                        <tr><td>C-</td><td>40-44</td><td>Below Average</td></tr>
+                        <tr><td>D+</td><td>35-39</td><td>Poor+</td></tr>
+                        <tr><td>D</td><td>30-34</td><td>Poor</td></tr>
+                        <tr><td>D-</td><td>25-29</td><td>Very Poor</td></tr>
+                        <tr><td>E</td><td>0-24</td><td>Fail</td></tr>
+                    </tbody>
+                </table>
+                <p class="small text-muted mt-2">Note: These are suggested ranges. You can customize the mark ranges as needed.</p>
             </div>
         </div>
         
@@ -249,6 +339,7 @@
                     <div class="form-group">
                         <label class="form-label">
                             <i class="bi bi-award"></i> Grade
+                            <span class="required-star">*</span>
                         </label>
                         {{ form.grade }}
                         {% if form.grade.help_text %}
@@ -263,6 +354,7 @@
                     <div class="form-group">
                         <label class="form-label">
                             <i class="bi bi-arrow-down-circle"></i> Min Mark
+                            <span class="required-star">*</span>
                         </label>
                         {{ form.min_mark }}
                         {% if form.min_mark.help_text %}
@@ -277,6 +369,7 @@
                     <div class="form-group">
                         <label class="form-label">
                             <i class="bi bi-arrow-up-circle"></i> Max Mark
+                            <span class="required-star">*</span>
                         </label>
                         {{ form.max_mark }}
                         {% if form.max_mark.help_text %}
@@ -290,7 +383,7 @@
                 <div class="col-12 mt-4">
                     <div class="d-flex gap-3">
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg me-1"></i> Save Grade Scale
+                            <i class="bi bi-check-lg"></i> Save Grade Scale
                         </button>
                         <a href="{% url 'grade_scale_list' %}" class="btn btn-outline-secondary">Cancel</a>
                     </div>
@@ -298,6 +391,147 @@
             </div>
         </form>
     </div>
+    
+    <!-- Footer -->
+    <div class="page-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Records — Ikonex Academy
+    </div>
 </div>
+
+{% block extra_js %}
+<script>
+/* Real-time validation for Grade Scale form */
+(function() {
+    function showErr(id, msg) {
+        var el = document.getElementById('err-' + id);
+        var inp = document.getElementById('id_' + id);
+        if (el) { 
+            el.textContent = msg; 
+            el.style.display = 'block'; 
+        }
+        if (inp) {
+            inp.classList.add('is-invalid');
+            inp.classList.remove('is-valid');
+        }
+    }
+    
+    function clearErr(id) {
+        var el = document.getElementById('err-' + id);
+        var inp = document.getElementById('id_' + id);
+        if (el) { 
+            el.textContent = ''; 
+            el.style.display = 'none'; 
+        }
+        if (inp) {
+            inp.classList.remove('is-invalid');
+            inp.classList.add('is-valid');
+        }
+    }
+    
+    function validateBound(id, label) {
+        var inp = document.getElementById('id_' + id);
+        if (!inp) return true;
+        var val = parseFloat(inp.value);
+        if (inp.value === '') { 
+            showErr(id, label + ' is required.'); 
+            return false; 
+        }
+        if (isNaN(val) || val < 0 || val > 100) { 
+            showErr(id, label + ' must be between 0 and 100.'); 
+            return false; 
+        }
+        clearErr(id); 
+        return true;
+    }
+    
+    function validateGrade() {
+        var inp = document.getElementById('id_grade');
+        if (!inp) return true;
+        var val = inp.value;
+        var validGrades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'E'];
+        if (!val) {
+            showErr('grade', 'Grade is required.');
+            return false;
+        }
+        if (!validGrades.includes(val)) {
+            showErr('grade', 'Invalid grade. Choose from: ' + validGrades.join(', '));
+            return false;
+        }
+        clearErr('grade');
+        return true;
+    }
+    
+    function validateMinMax() {
+        var minInp = document.getElementById('id_min_mark');
+        var maxInp = document.getElementById('id_max_mark');
+        if (!minInp || !maxInp || minInp.value === '' || maxInp.value === '') return true;
+        var minVal = parseFloat(minInp.value);
+        var maxVal = parseFloat(maxInp.value);
+        if (minVal >= maxVal) {
+            showErr('max_mark', 'Maximum mark must be greater than minimum mark.');
+            return false;
+        }
+        clearErr('max_mark');
+        return true;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var gradeInp = document.getElementById('id_grade');
+        var minInp   = document.getElementById('id_min_mark');
+        var maxInp   = document.getElementById('id_max_mark');
+
+        /* Inject inline error holders */
+        ['grade', 'min_mark', 'max_mark'].forEach(function(f) {
+            var inp = document.getElementById('id_' + f);
+            if (inp && !document.getElementById('err-' + f)) {
+                var d = document.createElement('div');
+                d.id = 'err-' + f;
+                d.style.cssText = 'font-size:0.7rem;color:#b22234;margin-top:0.25rem;display:none;';
+                inp.parentNode.insertBefore(d, inp.nextSibling);
+            }
+        });
+
+        if (gradeInp) {
+            gradeInp.addEventListener('change', validateGrade);
+            gradeInp.addEventListener('blur', validateGrade);
+        }
+        
+        if (minInp) {
+            minInp.addEventListener('input', function() { 
+                validateBound('min_mark', 'Min mark'); 
+                validateMinMax(); 
+            });
+            minInp.addEventListener('blur', function() { 
+                validateBound('min_mark', 'Min mark'); 
+                validateMinMax(); 
+            });
+        }
+        
+        if (maxInp) {
+            maxInp.addEventListener('input', function() { 
+                validateBound('max_mark', 'Max mark'); 
+                validateMinMax(); 
+            });
+            maxInp.addEventListener('blur', function() { 
+                validateBound('max_mark', 'Max mark'); 
+                validateMinMax(); 
+            });
+        }
+
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                var ok = true;
+                if (!validateGrade()) ok = false;
+                if (!validateBound('min_mark', 'Min mark')) ok = false;
+                if (!validateBound('max_mark', 'Max mark')) ok = false;
+                if (!validateMinMax()) ok = false;
+                if (!ok) e.preventDefault();
+            });
+        }
+    });
+})();
+</script>
+{% endblock %}
 
 {% endblock %}

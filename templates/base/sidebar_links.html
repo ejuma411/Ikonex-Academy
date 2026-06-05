@@ -56,6 +56,6 @@
 {% if request.user.role == 'superadmin' or request.user.is_superuser %}
 <a href="{% url 'superadmin_dashboard' %}" class="sidebar-link">
     <i class="bi bi-shield-lock-fill"></i>
-    <span>User Management</span>
+    <span>Staff Management</span>
 </a>
 {% endif %}

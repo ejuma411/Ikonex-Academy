@@ -154,11 +154,21 @@
     </div>
 
     <div class="form-card">
-        <form method="post">
+        <!-- Admission number info banner (Issue #2) -->
+        <div class="score-info mb-4" style="background:#f0fdf4;border-left:3px solid #16a34a;padding:0.75rem 1rem;border-radius:0.5rem;">
+            <small style="display:flex;align-items:center;gap:0.5rem;color:#166534;">
+                <i class="bi bi-magic" style="color:#16a34a;"></i>
+                <strong>Admission number is auto-generated</strong> — it will be assigned automatically in the format
+                <code style="background:#dcfce7;padding:0.1rem 0.4rem;border-radius:0.25rem;">ADM/YYYY/NNNN</code>
+                when the student is saved.
+            </small>
+        </div>
+
+        <form method="post" id="student-form" novalidate>
             {% csrf_token %}
             
             {% for field in form %}
-                <div class="form-group mb-4">
+                <div class="form-group mb-4" id="group-{{ field.html_name }}">
                     <label for="{{ field.id_for_label }}">
                         {{ field.label }}
                         {% if field.field.required %}
@@ -173,17 +183,17 @@
                     {% endif %}
                     
                     {% if field.errors %}
-                        <div class="errorlist">
-                            {% for error in field.errors %}
-                                {{ error }}
-                            {% endfor %}
+                        <div class="field-error" style="font-size:0.75rem;color:#dc2626;margin-top:0.25rem;">
+                            {% for error in field.errors %}{{ error }}{% endfor %}
                         </div>
+                    {% else %}
+                        <div class="field-error" style="font-size:0.75rem;color:#dc2626;margin-top:0.25rem;display:none;"></div>
                     {% endif %}
                 </div>
             {% endfor %}
             
             <div class="d-flex gap-3 mt-4">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="submit-btn">
                     <i class="bi bi-check-lg me-1"></i> Save Student
                 </button>
                 <a href="{% url 'student_list' %}" class="btn btn-outline-secondary">Cancel</a>
@@ -192,4 +202,70 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* Real-time validation for Student form (Issue #5) */
+(function() {
+    var namePattern = /^[A-Za-z]{2,}$/;
+
+    function showError(fieldName, msg) {
+        var group = document.getElementById('group-' + fieldName);
+        if (!group) return;
+        var err = group.querySelector('.field-error');
+        if (err) { err.textContent = msg; err.style.display = 'block'; }
+        var input = group.querySelector('input, select');
+        if (input) { input.style.borderColor = '#dc2626'; }
+    }
+
+    function clearError(fieldName) {
+        var group = document.getElementById('group-' + fieldName);
+        if (!group) return;
+        var err = group.querySelector('.field-error');
+        if (err) { err.textContent = ''; err.style.display = 'none'; }
+        var input = group.querySelector('input, select');
+        if (input) { input.style.borderColor = ''; }
+    }
+
+    function validateName(input, fieldName, label) {
+        var val = input.value.trim();
+        if (!val) { showError(fieldName, label + ' is required.'); return false; }
+        if (val.length < 2) { showError(fieldName, label + ' is too short.'); return false; }
+        if (!namePattern.test(val)) { showError(fieldName, label + ' must contain only letters.'); return false; }
+        clearError(fieldName); return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var firstNameInput = document.getElementById('id_first_name');
+        var lastNameInput  = document.getElementById('id_last_name');
+        var classInput     = document.getElementById('id_class_stream');
+
+        if (firstNameInput) {
+            firstNameInput.addEventListener('input', function() { validateName(this, 'first_name', 'First name'); });
+            firstNameInput.addEventListener('blur',  function() { validateName(this, 'first_name', 'First name'); });
+        }
+        if (lastNameInput) {
+            lastNameInput.addEventListener('input', function() { validateName(this, 'last_name', 'Last name'); });
+            lastNameInput.addEventListener('blur',  function() { validateName(this, 'last_name', 'Last name'); });
+        }
+        if (classInput) {
+            classInput.addEventListener('change', function() {
+                if (!this.value) { showError('class_stream', 'Please select a class stream.'); }
+                else { clearError('class_stream'); }
+            });
+        }
+
+        document.getElementById('student-form').addEventListener('submit', function(e) {
+            var ok = true;
+            if (firstNameInput && !validateName(firstNameInput, 'first_name', 'First name')) ok = false;
+            if (lastNameInput  && !validateName(lastNameInput,  'last_name',  'Last name'))  ok = false;
+            if (classInput && !classInput.value) {
+                showError('class_stream', 'Please select a class stream.'); ok = false;
+            }
+            if (!ok) e.preventDefault();
+        });
+    });
+})();
+</script>
 {% endblock %}

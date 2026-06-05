@@ -6,44 +6,67 @@
 {% block content %}
 
 <style>
-    /* Professional styling for Edit Score page */
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Edit Score - Matches Student Performance Report
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section */
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         flex-wrap: wrap;
         gap: 1rem;
     }
     
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
         font-weight: 700;
         margin: 0 0 0.25rem 0;
-        color: #1e293b;
-        letter-spacing: -0.02em;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
     }
     
     .page-subtitle {
-        color: #64748b;
+        color: var(--gray-500);
         margin: 0;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
     /* Form Card */
     .form-card {
         background: #ffffff;
-        border-radius: 1rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 25px -5px rgba(0,0,0,0.05);
-        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-md);
+        padding: 1.5rem;
         max-width: 680px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--gray-200);
     }
     
     /* Alert styling */
     .alert {
         padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
+        border-radius: 0.25rem;
         margin-bottom: 1.5rem;
     }
     
@@ -53,79 +76,79 @@
         color: #b91c1c;
     }
     
-    .alert-info {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        color: #1e40af;
-    }
-    
     /* Current score info box */
     .current-score-info {
-        background: #f8fafc;
+        background: var(--gray-50);
         border-radius: 0.5rem;
         padding: 1rem;
         margin-bottom: 1.5rem;
-        border-left: 3px solid #0f766e;
+        border-left: 3px solid var(--accent-primary);
     }
     
     .current-score-info .label {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #64748b;
+        color: var(--gray-500);
         margin-bottom: 0.25rem;
+        font-weight: 600;
     }
     
     .current-score-info .value {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         font-weight: 700;
-        color: #1e293b;
+        color: var(--accent-primary);
+        font-family: 'Georgia', serif;
     }
     
     .current-score-info .value small {
         font-weight: normal;
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--gray-500);
     }
     
     .current-score-details {
         display: flex;
-        gap: 1.5rem;
-        margin-top: 0.5rem;
+        gap: 1rem;
+        margin-top: 0.75rem;
         flex-wrap: wrap;
     }
     
     .current-score-details span {
-        font-size: 0.8rem;
-        color: #475569;
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        background: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        border: 1px solid var(--gray-200);
     }
     
     .current-score-details i {
-        color: #0f766e;
+        color: var(--accent-primary);
         margin-right: 0.25rem;
     }
     
     /* Form field styling */
-    .form-card form p {
-        margin-bottom: 1.5rem;
+    .form-group {
+        margin-bottom: 1.25rem;
     }
     
     .form-card label {
         display: block;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        color: #1e293b;
-        font-size: 0.875rem;
+        color: var(--gray-700);
+        font-size: 0.8rem;
     }
     
     .form-card input, 
     .form-card select, 
     .form-card textarea {
         width: 100%;
-        padding: 0.7rem 1rem;
-        border: 1px solid #cbd5e1;
-        border-radius: 0.5rem;
-        font-size: 0.95rem;
+        padding: 0.6rem 0.875rem;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.25rem;
+        font-size: 0.85rem;
         transition: all 0.2s;
         background: #fff;
     }
@@ -134,35 +157,35 @@
     .form-card select:focus, 
     .form-card textarea:focus {
         outline: none;
-        border-color: #0f766e;
-        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 2px rgba(26, 77, 140, 0.1);
     }
     
     /* Readonly fields */
     .form-card input:read-only,
     .form-card select:read-only,
     .form-card input[readonly] {
-        background: #f8fafc;
-        border-color: #e2e8f0;
-        color: #64748b;
+        background: var(--gray-50);
+        border-color: var(--gray-200);
+        color: var(--gray-600);
         cursor: not-allowed;
     }
     
     /* Help text styling */
-    .form-card .helptext {
+    .helptext {
         display: block;
-        font-size: 0.75rem;
-        color: #64748b;
+        font-size: 0.7rem;
+        color: var(--gray-500);
         margin-top: 0.25rem;
     }
     
     /* Error messages */
-    .form-card .errorlist {
+    .errorlist {
         list-style: none;
         padding: 0;
         margin: 0.25rem 0 0 0;
-        font-size: 0.75rem;
-        color: #dc2626;
+        font-size: 0.7rem;
+        color: var(--accent-red);
     }
     
     /* Buttons */
@@ -170,35 +193,68 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.6rem 1.25rem;
+        padding: 0.5rem 1.25rem;
         font-weight: 500;
-        border-radius: 0.5rem;
+        border-radius: 0.25rem;
         text-decoration: none;
         cursor: pointer;
         transition: all 0.2s;
         border: none;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
     
     .btn-primary {
-        background: #0f766e;
+        background: var(--accent-primary);
         color: white;
     }
     
     .btn-primary:hover {
-        background: #0b5e58;
+        background: #0f3b6b;
         transform: translateY(-1px);
     }
     
     .btn-outline-secondary {
         background: transparent;
-        border: 1px solid #cbd5e1;
-        color: #475569;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-600);
     }
     
     .btn-outline-secondary:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
+        background: var(--gray-100);
+        border-color: var(--gray-400);
+    }
+    
+    /* Score Preview */
+    .score-preview {
+        background: var(--gray-50);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        text-align: center;
+        border: 1px solid var(--gray-200);
+    }
+    
+    .score-preview-label {
+        font-size: 0.65rem;
+        color: var(--gray-500);
+        text-transform: uppercase;
+    }
+    
+    .score-preview-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        font-family: 'Georgia', serif;
+    }
+    
+    /* Footer */
+    .page-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
     }
     
     /* Responsive */
@@ -208,11 +264,11 @@
         }
         
         .page-title {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
         }
         
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 1rem;
         }
         
         .current-score-details {
@@ -223,13 +279,17 @@
 </style>
 
 <div class="container-fluid px-3 px-md-4">
+    <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1 class="page-title">Edit Score</h1>
+            <h1 class="page-title">
+                <i class="bi bi-pencil-square me-2" style="color: var(--accent-primary);"></i>
+                Edit Score
+            </h1>
             <p class="page-subtitle">Update the recorded marks below.</p>
         </div>
         <a href="{% url 'score_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back
+            <i class="bi bi-arrow-left"></i> Back
         </a>
     </div>
 
@@ -254,7 +314,7 @@
             {% csrf_token %}
             
             {% for field in form %}
-                <div class="form-group mb-4">
+                <div class="form-group">
                     <label for="{{ field.id_for_label }}">
                         {{ field.label }}
                         {% if field.field.required %}
@@ -280,11 +340,16 @@
             
             <div class="d-flex gap-3 mt-4">
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg me-1"></i> Update Score
+                    <i class="bi bi-check-lg"></i> Update Score
                 </button>
                 <a href="{% url 'score_list' %}" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </form>
+    </div>
+    
+    <!-- Footer -->
+    <div class="page-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Records — Ikonex Academy
     </div>
 </div>
 
