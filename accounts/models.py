@@ -40,29 +40,37 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
     def generate_staff_id(self):
+        """Generate a unique staff ID"""
         prefix_map = {
             'teacher': 'TCH',
             'staff': 'STF',
             'superadmin': 'ADM',
         }
-
+        
         prefix = prefix_map.get(self.role, 'USR')
-
-        last_user = User.objects.filter(
-            role=self.role,
+        
+        # Get all staff IDs with this prefix
+        existing_ids = User.objects.filter(
             staff_id__startswith=prefix
-        ).order_by('-id').first()
-
-        if last_user and last_user.staff_id:
+        ).values_list('staff_id', flat=True)
+        
+        # Extract numbers and find the maximum
+        numbers = []
+        for staff_id in existing_ids:
             try:
-                last_num = int(last_user.staff_id.replace(prefix, ''))
-                new_num = last_num + 1
-            except ValueError:
-                new_num = 1
+                # Extract numeric part
+                num_str = staff_id.replace(prefix, '')
+                if num_str.isdigit():
+                    numbers.append(int(num_str))
+            except (ValueError, AttributeError):
+                continue
+        
+        if numbers:
+            next_number = max(numbers) + 1
         else:
-            new_num = 1
-
-        return f"{prefix}{new_num:04d}"
+            next_number = 1
+        
+        return f"{prefix}{next_number:04d}"
 
     def __str__(self):
         return f"{self.get_full_name() or self.username} ({self.staff_id})"

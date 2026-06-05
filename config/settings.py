@@ -46,7 +46,7 @@ ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
 # Allowed Hosts
 if ENVIRONMENT == 'production':
-    ALLOWED_HOSTS = ['*']  # Override in production with specific domains
+    ALLOWED_HOSTS = ['*']
 else:
     DEFAULT_ALLOWED_HOSTS = "127.0.0.1,localhost,testserver,.ngrok-free.app,.ngrok-free.dev,.ngrok.io,.ngrok.app"
     ALLOWED_HOSTS = _split_env_list(os.getenv("ALLOWED_HOSTS", DEFAULT_ALLOWED_HOSTS))
@@ -87,7 +87,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "config.middleware.SessionIdleTimeoutMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -108,7 +107,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database configuration
 import dj_database_url
@@ -138,16 +136,10 @@ else:
         }
     }
 
-# Disable debug in production
-DEBUG = False
-
-# Use less memory-intensive session engine
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-
-# Reduce database connection pool
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default']['CONN_MAX_AGE'] = 0  # Don't keep persistent connections
-    DATABASES['default']['CONN_HEALTH_CHECKS'] = False 
+# Reduce database connection pool for Railway
+if os.getenv('RAILWAY_ENVIRONMENT') or ENVIRONMENT == 'production':
+    DATABASES['default']['CONN_MAX_AGE'] = 0
+    DATABASES['default']['CONN_HEALTH_CHECKS'] = False
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -179,7 +171,7 @@ LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
 # Security settings for production
-if ENVIRONMENT == 'production' or not DEBUG:
+if ENVIRONMENT == 'production':
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -208,7 +200,7 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_CLEAR_ON_LOGOUT = True
 
-if ENVIRONMENT == 'production' or not DEBUG:
+if ENVIRONMENT == 'production':
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = 'Strict'
 
@@ -340,11 +332,3 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success",
     },
 }
-
-
-import subprocess
-import sys
-
-if os.environ.get('RAILWAY_ENVIRONMENT'):
-    # Auto-collect static files on Railway
-    subprocess.call([sys.executable, 'manage.py', 'collectstatic', '--noinput'])
