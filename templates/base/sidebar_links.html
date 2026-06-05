@@ -40,12 +40,6 @@
     <span>Grading Scale</span>
 </a>
 
-<a href="{% url 'result_list' %}"
-   class="sidebar-link {% if 'result' in request.resolver_match.url_name %}active{% endif %}">
-    <i class="bi bi-trophy"></i>
-    <span>Results</span>
-</a>
-
 <a href="{% url 'report_list' %}"
    class="sidebar-link {% if 'report' in request.resolver_match.url_name %}active{% endif %}">
     <i class="bi bi-file-earmark-pdf"></i>
