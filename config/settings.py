@@ -87,7 +87,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "config.middleware.SessionIdleTimeoutMiddleware",
+    # "config.middleware.SessionIdleTimeoutMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -108,6 +108,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+# Disable debug in production
+DEBUG = False
+
+# Use less memory-intensive session engine
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+# Reduce database connection pool
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default']['CONN_MAX_AGE'] = 0  # type: ignore # Don't keep persistent connections
+    DATABASES['default']['CONN_HEALTH_CHECKS'] = False # type: ignore
 
 # Database configuration
 import dj_database_url
