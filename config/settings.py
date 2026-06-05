@@ -109,16 +109,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# Disable debug in production
-DEBUG = False
-
-# Use less memory-intensive session engine
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-
-# Reduce database connection pool
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default']['CONN_MAX_AGE'] = 0  # type: ignore # Don't keep persistent connections
-    DATABASES['default']['CONN_HEALTH_CHECKS'] = False # type: ignore
 
 # Database configuration
 import dj_database_url
@@ -147,6 +137,17 @@ else:
             },
         }
     }
+
+# Disable debug in production
+DEBUG = False
+
+# Use less memory-intensive session engine
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+# Reduce database connection pool
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default']['CONN_MAX_AGE'] = 0  # Don't keep persistent connections
+    DATABASES['default']['CONN_HEALTH_CHECKS'] = False 
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
