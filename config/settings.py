@@ -125,7 +125,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '3306'),
         "OPTIONS": {
             "charset": "utf8mb4",
-            "init_command": "SET storage_engine=INNODB",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
@@ -155,10 +155,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+# Change from UTC to Africa/Nairobi (East Africa Time)
+TIME_ZONE = "Africa/Nairobi"
 
 USE_I18N = True
 
+# Set to False if you want to store all times in local time
+# Set to True if you want to store times in UTC but display in local time
 USE_TZ = True
 
 

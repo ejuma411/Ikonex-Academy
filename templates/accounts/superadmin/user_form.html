@@ -1,42 +1,118 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
-{% block title %}{{ title }} | Ikonex Academy{% endblock %}
+{% block title %}{{ title }} | User Management{% endblock %}
 
 {% block content %}
+<style>
+    .form-container {
+        max-width: 800px;
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        padding: 2rem;
+        margin: 0 auto;
+    }
+    
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #0f766e;
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+    }
+    
+    .form-text {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+    }
+    
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.25rem 0 0;
+        color: #dc2626;
+        font-size: 0.75rem;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-primary {
+        background: #0f766e;
+        color: white;
+        padding: 0.625rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 0.625rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        text-decoration: none;
+    }
+</style>
+
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>{{ title }}</h1>
-        <a href="{% url 'user_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Users
+        <div>
+            <h1 class="h2 mb-0">{{ title }}</h1>
+            <p class="text-muted">{% if user %}Edit user information{% else %}Add a new user to the system{% endif %}</p>
+        </div>
+        <a href="{% url 'user_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
         </a>
     </div>
     
-    <div class="card" style="max-width: 800px;">
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                
-                {% for field in form %}
-                <div class="mb-3">
-                    <label class="form-label">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <small class="text-muted">{{ field.help_text }}</small>
-                    {% endif %}
-                    {% if field.errors %}
-                        <div class="text-danger small">{{ field.errors }}</div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-                
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-lg"></i> {{ title }}
-                    </button>
-                    <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
-        </div>
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="errorlist">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> {{ title }}
+                </button>
+                <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

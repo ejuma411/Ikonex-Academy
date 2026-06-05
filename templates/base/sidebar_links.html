@@ -51,3 +51,11 @@
     <i class="bi bi-file-earmark-pdf"></i>
     <span>Reports</span>
 </a>
+
+<!-- Only show for superadmin users -->
+{% if request.user.role == 'superadmin' or request.user.is_superuser %}
+<a href="{% url 'superadmin_dashboard' %}" class="sidebar-link">
+    <i class="bi bi-shield-lock-fill"></i>
+    <span>User Management</span>
+</a>
+{% endif %}

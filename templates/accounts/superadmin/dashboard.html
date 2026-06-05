@@ -1,13 +1,13 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Superadmin Dashboard | Ikonex Academy{% endblock %}
+{% block title %}Superadmin Dashboard | User Management{% endblock %}
 
 {% block content %}
 <style>
-    .stats-grid {
+    .dashboard-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
     }
@@ -16,30 +16,32 @@
         background: white;
         border-radius: 1rem;
         padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         border: 1px solid #e2e8f0;
-        transition: transform 0.2s;
+        transition: all 0.2s;
     }
     
     .stat-card:hover {
         transform: translateY(-3px);
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
     }
     
     .stat-number {
         font-size: 2.5rem;
         font-weight: 700;
         color: #0f766e;
+        margin-bottom: 0.5rem;
     }
     
     .stat-label {
         color: #64748b;
-        font-size: 0.85rem;
-        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
     .action-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-bottom: 2rem;
     }
@@ -48,22 +50,32 @@
         background: #f8fafc;
         border: 1px solid #e2e8f0;
         border-radius: 0.75rem;
-        padding: 1rem;
+        padding: 1.25rem;
         text-align: center;
         transition: all 0.2s;
+        text-decoration: none;
+        display: block;
     }
     
     .action-card:hover {
         background: #0f766e;
+        transform: translateY(-2px);
+    }
+    
+    .action-card:hover i,
+    .action-card:hover span {
         color: white;
     }
     
-    .action-card:hover a {
-        color: white;
+    .action-card i {
+        font-size: 2rem;
+        color: #0f766e;
+        margin-bottom: 0.5rem;
+        display: inline-block;
     }
     
-    .action-card a {
-        text-decoration: none;
+    .action-card span {
+        display: block;
         color: #1e293b;
         font-weight: 500;
     }
@@ -81,24 +93,31 @@
         padding: 1rem 1.5rem;
         border-bottom: 1px solid #e2e8f0;
         font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     
     .section-body {
-        padding: 1rem 1.5rem;
-    }
-    
-    .user-list {
-        list-style: none;
         padding: 0;
-        margin: 0;
     }
     
-    .user-list li {
-        padding: 0.75rem 0;
+    .user-list, .assignment-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .user-list li, .assignment-list li {
+        padding: 1rem 1.5rem;
         border-bottom: 1px solid #f1f5f9;
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+    
+    .user-list li:last-child, .assignment-list li:last-child {
+        border-bottom: none;
     }
     
     .badge {
@@ -111,42 +130,59 @@
     .badge-teacher { background: #dbeafe; color: #1e40af; }
     .badge-staff { background: #fef3c7; color: #92400e; }
     .badge-superadmin { background: #dcfce7; color: #15803d; }
+    
+    .btn-sm {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        border-radius: 0.375rem;
+        text-decoration: none;
+    }
+    
+    .btn-outline-primary {
+        border: 1px solid #0f766e;
+        color: #0f766e;
+        background: transparent;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #0f766e;
+        color: white;
+    }
 </style>
 
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Superadmin Dashboard</h1>
-    <p class="text-muted">Complete user and assignment management for school administration</p>
-    
-    <!-- Quick Actions -->
-    <div class="action-grid">
-        <div class="action-card">
-            <a href="{% url 'user_create' %}">
-                <i class="bi bi-person-plus fs-4"></i><br>
-                Create New User
-            </a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-0">User Management Dashboard</h1>
+            <p class="text-muted">Manage teachers, staff, and system assignments</p>
         </div>
-        <div class="action-card">
-            <a href="{% url 'user_list' %}">
-                <i class="bi bi-people fs-4"></i><br>
-                Manage Users
-            </a>
-        </div>
-        <div class="action-card">
-            <a href="{% url 'assign_class_teacher' %}">
-                <i class="bi bi-building fs-4"></i><br>
-                Assign Class Teacher
-            </a>
-        </div>
-        <div class="action-card">
-            <a href="{% url 'assign_subject_teacher' %}">
-                <i class="bi bi-book fs-4"></i><br>
-                Assign Subject Teacher
-            </a>
+        <div>
+            <span class="text-muted">{{ request.user.get_full_name }}</span>
         </div>
     </div>
     
-    <!-- Stats -->
-    <div class="stats-grid">
+    <!-- Quick Actions -->
+    <div class="action-grid">
+        <a href="{% url 'user_create' %}" class="action-card">
+            <i class="bi bi-person-plus-fill"></i>
+            <span>Create New User</span>
+        </a>
+        <a href="{% url 'user_list' %}" class="action-card">
+            <i class="bi bi-people-fill"></i>
+            <span>View All Users</span>
+        </a>
+        <a href="{% url 'assign_class_teacher' %}" class="action-card">
+            <i class="bi bi-building-fill"></i>
+            <span>Assign Class Teacher</span>
+        </a>
+        <a href="{% url 'assign_subject_teacher' %}" class="action-card">
+            <i class="bi bi-book-fill"></i>
+            <span>Assign Subject Teacher</span>
+        </a>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="dashboard-stats">
         <div class="stat-card">
             <div class="stat-number">{{ total_teachers }}</div>
             <div class="stat-label">Teachers</div>
@@ -156,12 +192,8 @@
             <div class="stat-label">Staff Members</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">{{ total_classes }}</div>
-            <div class="stat-label">Class Streams</div>
-        </div>
-        <div class="stat-card">
             <div class="stat-number">{{ total_class_assignments }}</div>
-            <div class="stat-label">Class Teacher Assignments</div>
+            <div class="stat-label">Class Assignments</div>
         </div>
         <div class="stat-card">
             <div class="stat-number">{{ total_subject_assignments }}</div>
@@ -172,20 +204,46 @@
     <!-- Recent Users -->
     <div class="section-card">
         <div class="section-header">
-            <i class="bi bi-people me-2"></i> Recently Added Users
+            <span><i class="bi bi-clock-history me-2"></i> Recently Added Users</span>
+            <a href="{% url 'user_list' %}" class="text-primary small">View All →</a>
         </div>
         <div class="section-body">
             <ul class="user-list">
                 {% for user in recent_users %}
                 <li>
                     <div>
-                        <strong>{{ user.get_full_name }}</strong><br>
-                        <small class="text-muted">{{ user.username }} | {{ user.get_role_display }}</small>
+                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                        <span class="badge ms-2 badge-{{ user.role }}">{{ user.get_role_display }}</span>
+                        <div class="small text-muted">Added: {{ user.date_joined|date:"M d, Y" }}</div>
                     </div>
-                    <a href="{% url 'user_detail' user.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                    <a href="{% url 'user_detail' user.id %}" class="btn-sm btn-outline-primary">View</a>
                 </li>
                 {% empty %}
-                <li>No users found.</li>
+                <li class="text-muted text-center py-3">No users added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Recent Class Assignments -->
+    <div class="section-card">
+        <div class="section-header">
+            <span><i class="bi bi-building me-2"></i> Recent Class Teacher Assignments</span>
+            <a href="{% url 'assign_class_teacher' %}" class="text-primary small">New Assignment →</a>
+        </div>
+        <div class="section-body">
+            <ul class="assignment-list">
+                {% for assignment in recent_class_assignments %}
+                <li>
+                    <div>
+                        <strong>{{ assignment.class_stream.name }}</strong>
+                        <div class="small">Teacher: {{ assignment.teacher.get_full_name }}</div>
+                        <div class="small text-muted">Year: {{ assignment.academic_year }}</div>
+                    </div>
+                    <span class="badge bg-success small">Active</span>
+                </li>
+                {% empty %}
+                <li class="text-muted text-center py-3">No class assignments yet.</li>
                 {% endfor %}
             </ul>
         </div>

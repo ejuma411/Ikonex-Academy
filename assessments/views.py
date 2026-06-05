@@ -129,7 +129,7 @@ def class_result_view(request, class_id):
     result = class_ranking(class_id)
     class_stream = result["class_stream"]
     ranking = result["ranking"]
-    subjects = class_stream.classsubject_set.select_related("subject").all()
+    subjects = class_stream.class_subjects.select_related("subject").all()
     
     # Calculate statistics for the template
     if ranking:

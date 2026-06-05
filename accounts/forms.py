@@ -24,13 +24,20 @@ class StaffLoginForm(forms.Form):
 
 
 class StaffUserCreationForm(UserCreationForm):
+    """Form for creating new users - staff_id auto-generated"""
+    
     class Meta:
         model = User
-        fields = ("username", "first_name", "last_name", "email", "is_staff", "is_superuser")
-        labels = {
-            "username": "Staff No",
-            "is_staff": "Active Staff Account",
-            "is_superuser": "Administrator Access",
+        fields = ('username', 'first_name', 'last_name', 'email', 'role', 'phone_number', 'address')
+        # Autogenerate staff_id in the model's save() method, so we don't include it in the form
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'role': forms.Select(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
 

@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Assign Subject Teacher{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        padding: 2rem;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-0">Assign Subject Teacher</h1>
+            <p class="text-muted">Assign a teacher to teach a specific subject in a class</p>
+        </div>
+        <a href="{% url 'superadmin_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+    
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label class="form-label">Teacher</label>
+                {{ form.teacher }}
+                {% if form.teacher.errors %}
+                    <div class="text-danger small">{{ form.teacher.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Class & Subject</label>
+                {{ form.class_subject }}
+                <div class="form-text">Select a class and subject combination</div>
+                {% if form.class_subject.errors %}
+                    <div class="text-danger small">{{ form.class_subject.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Academic Year</label>
+                {{ form.academic_year }}
+                <div class="form-text">Format: 2024/2025</div>
+                {% if form.academic_year.errors %}
+                    <div class="text-danger small">{{ form.academic_year.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-check-lg"></i> Assign Subject Teacher
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

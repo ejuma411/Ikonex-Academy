@@ -14,7 +14,7 @@ def class_list(request):
 def class_detail(request, pk):
     class_stream = get_object_or_404(ClassStream, pk=pk)
     students = class_stream.students.all()
-    subjects = class_stream.classsubject_set.select_related('subject').all()
+    subjects = class_stream.class_subjects.select_related('subject').all()
     return render(request, 'classes/detail.html', {
         'class_stream': class_stream,
         'students': students,

@@ -72,7 +72,7 @@ def logout_view(request):
 @staff_member_required
 def superadmin_dashboard(request):
     """Superadmin dashboard for complete user management"""
-    if not request.user.is_superadmin():
+    if not request.user.role == 'superadmin':
         messages.error(request, "Access denied. Superadmin privileges required.")
         return redirect('admin:index')
     
@@ -92,7 +92,7 @@ def superadmin_dashboard(request):
 @staff_member_required
 def user_list(request):
     """List all users with filtering options"""
-    if not request.user.is_superadmin():
+    if not request.user.role == 'superadmin':
         messages.error(request, "Access denied.")
         return redirect('admin:index')
     
@@ -113,7 +113,7 @@ def user_list(request):
 @staff_member_required
 def user_create(request):
     """Create a new user (teacher or staff)"""
-    if not request.user.is_superadmin():
+    if not request.user.role == 'superadmin':
         messages.error(request, "Access denied.")
         return redirect('admin:index')
     
@@ -145,7 +145,7 @@ def user_create(request):
 @staff_member_required
 def user_detail(request, user_id):
     """View user details and assignments"""
-    if not request.user.is_superadmin():
+    if not request.user.role == 'superadmin':
         messages.error(request, "Access denied.")
         return redirect('admin:index')
     
@@ -166,7 +166,7 @@ def user_detail(request, user_id):
 @staff_member_required
 def user_edit(request, user_id):
     """Edit user information"""
-    if not request.user.is_superadmin():
+    if not request.user.role == 'superadmin':
         messages.error(request, "Access denied.")
         return redirect('admin:index')
     
@@ -187,7 +187,7 @@ def user_edit(request, user_id):
 @staff_member_required
 def user_delete(request, user_id):
     """Delete a user (soft delete or permanent)"""
-    if not request.user.is_superadmin():
+    if not request.user.role == 'superadmin':
         messages.error(request, "Access denied.")
         return redirect('admin:index')
     
@@ -205,52 +205,93 @@ def user_delete(request, user_id):
 @staff_member_required
 def assign_class_teacher(request, user_id=None):
     """Assign a teacher as class teacher"""
-    if not request.user.is_superadmin():
-        messages.error(request, "Access denied.")
-        return redirect('admin:index')
+    if not request.user.is_superuser and request.user.role != 'superadmin':
+        messages.error(request, "Access denied. Superadmin privileges required.")
+        return redirect('superadmin_dashboard')
+    
+    # Initialize form
+    form = TeacherAssignmentForm(request.POST or None)
     
     if request.method == 'POST':
-        form = TeacherAssignmentForm(request.POST)
         if form.is_valid():
+            # Get cleaned data (not calling as function)
+            teacher = form.cleaned_data.get('teacher')
+            class_stream = form.cleaned_data.get('class_stream')
+            academic_year = form.cleaned_data.get('academic_year')
+            
+            # Create assignment
             assignment = ClassTeacherAssignment.objects.create(
-                class_stream=form.cleaned_data['class_stream'],
-                teacher=form.cleaned_data['teacher'],
-                academic_year=form.cleaned_data['academic_year'],
+                teacher=teacher,
+                class_stream=class_stream,
+                academic_year=academic_year,
                 assigned_by=request.user
             )
-            messages.success(request, f"Teacher {assignment.teacher.get_full_name()} assigned to {assignment.class_stream.name}!")
-            return redirect('user_detail', user_id=assignment.teacher.id)
-    else:
-        initial = {}
-        if user_id:
-            initial['teacher'] = user_id
-        form = TeacherAssignmentForm(initial=initial)
+            
+            messages.success(
+                request, 
+                f"Teacher {teacher.get_full_name()} assigned to {class_stream.name} successfully!"
+            )
+            
+            # Redirect to user detail if user_id provided, otherwise dashboard
+            if user_id:
+                return redirect('user_detail', user_id=user_id)
+            return redirect('superadmin_dashboard')
     
-    return render(request, 'accounts/superadmin/assign_class_teacher.html', {'form': form})
+    # Pre-select teacher if user_id provided
+    if user_id:
+        teacher = get_object_or_404(User, id=user_id)
+        form = TeacherAssignmentForm(initial={'teacher': teacher})
+    
+    context = {
+        'form': form,
+        'title': 'Assign Class Teacher'
+    }
+    return render(request, 'accounts/superadmin/assign_class_teacher.html', context)
 
 
 @staff_member_required
 def assign_subject_teacher(request, user_id=None):
     """Assign a teacher to teach a subject"""
-    if not request.user.is_superadmin():
-        messages.error(request, "Access denied.")
-        return redirect('admin:index')
+    if not request.user.is_superuser and request.user.role != 'superadmin':
+        messages.error(request, "Access denied. Superadmin privileges required.")
+        return redirect('superadmin_dashboard')
+    
+    # Initialize form
+    form = SubjectAssignmentForm(request.POST or None)
     
     if request.method == 'POST':
-        form = SubjectAssignmentForm(request.POST)
         if form.is_valid():
+            # Get cleaned data (not calling as function)
+            teacher = form.cleaned_data.get('teacher')
+            class_subject = form.cleaned_data.get('class_subject')
+            academic_year = form.cleaned_data.get('academic_year')
+            
+            # Create assignment
             assignment = TeacherSubjectAssignment.objects.create(
-                class_subject=form.cleaned_data['class_subject'],
-                teacher=form.cleaned_data['teacher'],
-                academic_year=form.cleaned_data['academic_year'],
+                teacher=teacher,
+                class_subject=class_subject,
+                academic_year=academic_year,
                 assigned_by=request.user
             )
-            messages.success(request, f"Teacher {assignment.teacher.get_full_name()} assigned to {assignment.class_subject}!")
-            return redirect('user_detail', user_id=assignment.teacher.id)
-    else:
-        initial = {}
-        if user_id:
-            initial['teacher'] = user_id
-        form = SubjectAssignmentForm(initial=initial)
+            
+            messages.success(
+                request, 
+                f"Teacher {teacher.get_full_name()} assigned to {class_subject} successfully!"
+            )
+            
+            # Redirect to user detail if user_id provided, otherwise dashboard
+            if user_id:
+                return redirect('user_detail', user_id=user_id)
+            return redirect('superadmin_dashboard')
     
-    return render(request, 'accounts/superadmin/assign_subject_teacher.html', {'form': form})
+    # Pre-select teacher if user_id provided
+    if user_id:
+        teacher = get_object_or_404(User, id=user_id)
+        form = SubjectAssignmentForm(initial={'teacher': teacher})
+    
+    context = {
+        'form': form,
+        'title': 'Assign Subject Teacher'
+    }
+    return render(request, 'accounts/superadmin/assign_subject_teacher.html', context)
+    
