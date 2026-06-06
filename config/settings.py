@@ -44,15 +44,22 @@ DEBUG = os.getenv("DEBUG", "True").lower() in {"1", "true", "yes", "on"}
 # Environment
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
+# ========== RENDER SPECIFIC SETTINGS ==========
+RENDER = os.getenv('RENDER', False)
+
 # Allowed Hosts
-if ENVIRONMENT == 'production':
+if RENDER:
+    ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+elif ENVIRONMENT == 'production':
     ALLOWED_HOSTS = ['*']
 else:
     DEFAULT_ALLOWED_HOSTS = "127.0.0.1,localhost,testserver,.ngrok-free.app,.ngrok-free.dev,.ngrok.io,.ngrok.app"
     ALLOWED_HOSTS = _split_env_list(os.getenv("ALLOWED_HOSTS", DEFAULT_ALLOWED_HOSTS))
 
 # CSRF Trusted Origins
-if ENVIRONMENT == 'production':
+if RENDER:
+    CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
+elif ENVIRONMENT == 'production':
     CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.up.railway.app']
 else:
     DEFAULT_CSRF_TRUSTED_ORIGINS = (
@@ -108,7 +115,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# Database configuration
+# ========== DATABASE CONFIGURATION ==========
 import dj_database_url
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -136,8 +143,8 @@ else:
         }
     }
 
-# Reduce database connection pool for Railway
-if os.getenv('RAILWAY_ENVIRONMENT') or ENVIRONMENT == 'production':
+# Optimize database for free tier (Render, Railway)
+if RENDER or ENVIRONMENT == 'production':
     DATABASES['default']['CONN_MAX_AGE'] = 0
     DATABASES['default']['CONN_HEALTH_CHECKS'] = False
 
@@ -155,13 +162,12 @@ TIME_ZONE = "Africa/Nairobi"
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# ========== STATIC & MEDIA FILES ==========
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -170,8 +176,20 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
-# Security settings for production
-if ENVIRONMENT == 'production':
+# ========== SECURITY SETTINGS ==========
+if RENDER:
+    # Render-specific security
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_REFERRER_POLICY = "same-origin"
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+elif ENVIRONMENT == 'production':
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -200,7 +218,7 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_CLEAR_ON_LOGOUT = True
 
-if ENVIRONMENT == 'production':
+if RENDER or ENVIRONMENT == 'production':
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = 'Strict'
 
