@@ -272,7 +272,8 @@
             <thead>
                 <tr>
                     <th>Class Name</th>
-                    <th style="width: 200px;">Actions</th>
+                    <th style="width: 110px; text-align: center;">Students</th>
+                    <th style="width: 280px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -286,10 +287,29 @@
                             {{ c.name }}
                         </div>
                     </td>
+                    <td style="text-align: center;">
+                        <span style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 0.35rem;
+                            background: var(--gray-100);
+                            border-radius: 2rem;
+                            padding: 0.2rem 0.75rem;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            color: var(--accent-primary);
+                        ">
+                            <i class="bi bi-people-fill" style="font-size: 0.7rem;"></i>
+                            {{ c.student_count }}
+                        </span>
+                    </td>
                     <td>
                         <div class="action-buttons">
                             <a href="{% url 'class_detail' c.id %}" class="btn-view">
-                                <i class="bi bi-eye"></i> View
+                                <i class="bi bi-eye"></i> Students
+                            </a>
+                            <a href="{% url 'class_result' c.id %}" class="btn-view" style="border-color: #2d6a4f; color: #2d6a4f;" title="View class performance results">
+                                <i class="bi bi-trophy"></i> Results
                             </a>
                             <a href="{% url 'class_update' c.id %}" class="btn-edit">
                                 <i class="bi bi-pencil"></i> Edit
@@ -302,7 +322,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="2" class="empty-state">
+                    <td colspan="3" class="empty-state">
                         <i class="bi bi-building"></i>
                         <p>No class streams added yet.</p>
                         <a href="{% url 'class_create' %}" class="btn-primary" style="display: inline-flex; margin-top: 0.5rem;">

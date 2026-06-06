@@ -1,36 +1,482 @@
 {% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Subject Performance Report | {{ subject.name }} | {{ class_stream.name }} | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-start">
-    <div>
-        <h2>Subject Performance Report</h2>
-        <p class="mb-1"><strong>Class:</strong> {{ class_stream.name }}</p>
-        <p class="mb-1"><strong>Subject:</strong> {{ subject.name }}</p>
+<style>
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Subject Performance Report
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
+    }
+    
+    .page-subtitle {
+        color: var(--gray-500);
+        margin: 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Info Card */
+    .info-card {
+        background: #ffffff;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .info-card-header {
+        background: linear-gradient(135deg, var(--accent-primary) 0%, #0f3b6b 100%);
+        padding: 1rem 1.25rem;
+        border-bottom: none;
+    }
+    
+    .info-card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .info-card-body {
+        padding: 1.25rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    
+    .info-item {
+        text-align: center;
+    }
+    
+    .info-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        color: var(--gray-500);
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--gray-800);
+    }
+    
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        font-family: 'Georgia', serif;
+    }
+    
+    .stat-label {
+        font-size: 0.65rem;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.25rem;
+    }
+    
+    /* Section Header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1.5rem 0 1rem 0;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: var(--accent-primary);
+    }
+    
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent-primary) 0%, var(--gray-200) 100%);
+        margin: 0.5rem 0 1.25rem 0;
+    }
+    
+    /* Table Container */
+    .table-wrapper {
+        background: #ffffff;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+        overflow-x: auto;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 1.5rem;
+    }
+    
+    .performance-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    
+    .performance-table thead th {
+        background: var(--accent-primary);
+        padding: 0.875rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .performance-table tbody td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--gray-100);
+        color: var(--gray-700);
+        vertical-align: middle;
+    }
+    
+    .performance-table tbody tr:hover {
+        background: var(--gray-50);
+    }
+    
+    .performance-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Rank Badges */
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: var(--gray-100);
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: var(--gray-700);
+    }
+    
+    .rank-1 { background: #fef3c7; color: #d97706; }
+    .rank-2 { background: #e8f4f8; color: #0284c7; }
+    .rank-3 { background: #f0fdf4; color: #16a34a; }
+    
+    /* Grade Badges */
+    .grade-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-align: center;
+        min-width: 48px;
+    }
+    
+    .grade-A { background: #dcfce7; color: #15803d; }
+    .grade-B { background: #dbeafe; color: #1e40af; }
+    .grade-C { background: #fef9c3; color: #854d0e; }
+    .grade-D { background: #ffedd5; color: #9a3412; }
+    .grade-E, .grade-F { background: #fee2e2; color: #b91c1c; }
+    
+    /* Student Name */
+    .student-name {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .student-avatar {
+        width: 28px;
+        height: 28px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+    }
+    
+    /* Buttons */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border-radius: 0.375rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        font-size: 0.8rem;
+    }
+    
+    .btn-back:hover {
+        background: var(--gray-200);
+    }
+    
+    /* Footer */
+    .page-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--gray-300);
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .info-grid, .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .student-name {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="container-fluid px-3 px-md-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="bi bi-bar-chart-steps me-2" style="color: var(--accent-primary);"></i>
+                Subject Performance Report
+            </h1>
+            <p class="page-subtitle">Detailed performance analysis by subject</p>
+        </div>
+        <a href="{% url 'class_result' class_stream.id %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Class Report
+        </a>
+    </div>
+    
+    <!-- Info Card -->
+    <div class="info-card">
+        <div class="info-card-header">
+            <h5>
+                <i class="bi bi-info-circle"></i>
+                Report Information
+            </h5>
+        </div>
+        <div class="info-card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Class Stream</div>
+                    <div class="info-value">{{ class_stream.name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Subject</div>
+                    <div class="info-value">{{ subject.name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Subject Code</div>
+                    <div class="info-value">{{ subject.code }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Report Date</div>
+                    <div class="info-value">{{ current_date|date:"d/m/Y" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Summary -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_students|default:"0" }}</div>
+            <div class="stat-label">Total Students</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ class_average|default:"0" }}%</div>
+            <div class="stat-label">Class Average</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ highest_score|default:"0" }}%</div>
+            <div class="stat-label">Highest Score</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ pass_count|default:"0" }}</div>
+            <div class="stat-label">Passing Students</div>
+        </div>
+    </div>
+    
+    <!-- Performance Table -->
+    <div class="section-header">
+        <div class="section-title">
+            <i class="bi bi-trophy-fill"></i>
+            Student Ranking by Subject Performance
+        </div>
+    </div>
+    <div class="section-divider"></div>
+    
+    <div class="table-wrapper">
+        <table class="performance-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%">Position</th>
+                    <th style="width: 35%">Student Name</th>
+                    <th style="width: 15%">Total Marks</th>
+                    <th style="width: 15%">Percentage</th>
+                    <th style="width: 13%">Grade</th>
+                    <th style="width: 12%">Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ranking %}
+                <tr>
+                    <td style="text-align: center;">
+                        <span class="rank-badge 
+                            {% if item.position == 1 %}rank-1
+                            {% elif item.position == 2 %}rank-2
+                            {% elif item.position == 3 %}rank-3{% endif %}">
+                            {{ item.position }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="student-name">
+                            <div class="student-avatar">
+                                {{ item.student.first_name|first|upper }}{{ item.student.last_name|first|upper }}
+                            </div>
+                            {{ item.student.first_name }} {{ item.student.last_name }}
+                        </div>
+                    </td>
+                    <td style="text-align: center;"><strong>{{ item.total|floatformat:1 }}</strong></td>
+                    <td style="text-align: center;">{{ item.average|floatformat:1 }}%</td>
+                    <td style="text-align: center;">
+                        <span class="grade-badge grade-{{ item.grade }}">
+                            {{ item.grade|default:"N/A" }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if item.grade == 'A' or item.grade == 'A-' %}
+                            <span style="color: #15803d;">Excellent</span>
+                        {% elif item.grade == 'B+' or item.grade == 'B' or item.grade == 'B-' %}
+                            <span style="color: #1e40af;">Good</span>
+                        {% elif item.grade == 'C+' or item.grade == 'C' or item.grade == 'C-' %}
+                            <span style="color: #854d0e;">Satisfactory</span>
+                        {% elif item.grade == 'D+' or item.grade == 'D' or item.grade == 'D-' %}
+                            <span style="color: #9a3412;">Below Average</span>
+                        {% elif item.grade == 'E' or item.grade == 'F' %}
+                            <span style="color: #b91c1c;">Needs Improvement</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <i class="bi bi-people"></i>
+                        <p>No assessment data available for this subject.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Footer -->
+    <div class="page-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Record — Ikonex Academy
     </div>
 </div>
-
-<table class="table table-bordered mt-4">
-    <tr>
-        <th>Position</th>
-        <th>Student</th>
-        <th>Total</th>
-        <th>Average</th>
-        <th>Grade</th>
-    </tr>
-    {% for item in ranking %}
-    <tr>
-        <td>{{ item.position }}</td>
-        <td>{{ item.student.first_name }} {{ item.student.last_name }}</td>
-        <td>{{ item.total }}</td>
-        <td>{{ item.average }}</td>
-        <td>{{ item.grade }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="5" class="text-center text-muted">No students in this class stream.</td>
-    </tr>
-    {% endfor %}
-</table>
 
 {% endblock %}

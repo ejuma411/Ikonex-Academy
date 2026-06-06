@@ -38,8 +38,6 @@ AUTH_USER_MODEL = 'accounts.User'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me-in-production")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "True").lower() in {"1", "true", "yes", "on"}
 
 # Environment
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')

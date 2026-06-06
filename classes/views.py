@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from accounts.decorators import staff_required
 from .models import ClassStream
@@ -6,14 +7,16 @@ from .forms import ClassStreamForm
 
 @staff_required
 def class_list(request):
-    classes = ClassStream.objects.all()
+    classes = ClassStream.objects.annotate(
+        student_count=Count('students')
+    ).order_by('name')
     return render(request, 'classes/list.html', {'classes': classes})
 
 
 @staff_required
 def class_detail(request, pk):
     class_stream = get_object_or_404(ClassStream, pk=pk)
-    students = class_stream.students.all()
+    students = class_stream.students.all().order_by('last_name', 'first_name')
     subjects = class_stream.class_subjects.select_related('subject').all()
     return render(request, 'classes/detail.html', {
         'class_stream': class_stream,

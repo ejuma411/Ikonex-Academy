@@ -1,45 +1,371 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block title %}{{ subject.name }} | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<div class="page-header">
-    <div>
-        <h1 class="page-title">{{ subject.name }}</h1>
-        <p class="page-subtitle">Subject code: <strong>{{ subject.code }}</strong></p>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'subject_update' subject.id %}" class="btn btn-outline-secondary">
-            <i class="bi bi-pencil me-1"></i> Edit
-        </a>
-        <a href="{% url 'subject_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back
-        </a>
-    </div>
-</div>
+<style>
+    /* ============================================
+       OFFICIAL ACADEMIC RECORD STYLE
+       Subject Detail - Matches other templates
+    ============================================ */
+    
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --accent-red: #b22234;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Header Section */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
+    }
+    
+    .page-subtitle {
+        color: var(--gray-500);
+        margin: 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 0.25rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+    
+    .btn-outline-secondary {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-600);
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-400);
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
+    }
+    
+    .btn-outline-primary:hover {
+        background: var(--accent-primary);
+        color: white;
+    }
+    
+    .btn-sm {
+        padding: 0.3rem 0.75rem;
+        font-size: 0.7rem;
+    }
+    
+    /* Detail Card */
+    .detail-card {
+        background: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, var(--accent-primary) 0%, #0f3b6b 100%);
+        padding: 1rem 1.25rem;
+        border-bottom: none;
+    }
+    
+    .card-header h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .card-header h6 i {
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    /* Info Rows */
+    .info-row {
+        display: flex;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    
+    .info-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .info-label {
+        width: 100px;
+        font-weight: 500;
+        color: var(--gray-600);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .info-value {
+        flex: 1;
+        font-weight: 500;
+        color: var(--gray-800);
+        font-size: 0.85rem;
+    }
+    
+    .code-badge {
+        display: inline-block;
+        background: var(--gray-100);
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+        font-family: monospace;
+    }
+    
+    /* Assignment List */
+    .assignment-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .assignment-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.875rem 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    
+    .assignment-item:last-child {
+        border-bottom: none;
+    }
+    
+    .assignment-item:hover {
+        background: var(--gray-50);
+    }
+    
+    .assignment-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .assignment-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--gray-100);
+        border-radius: 0.375rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-primary);
+    }
+    
+    .assignment-name {
+        font-weight: 600;
+        color: var(--gray-800);
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 2rem 1.5rem;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 2.5rem;
+        color: var(--gray-300);
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+    
+    /* Footer */
+    .page-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        border-top: 1px solid var(--gray-200);
+        padding-top: 0.75rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .assignment-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .btn-outline-primary {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
 
-<div class="card" style="max-width:600px;">
-    <div class="card-body">
-        <h6 class="fw-700 text-muted fs-sm text-uppercase mb-3" style="letter-spacing:.08em">
-            Assigned Class Streams
-        </h6>
-        <ul class="list-unstyled mb-0">
-            {% for assignment in assignments %}
-            <li class="py-2 border-bottom d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-building text-brand"></i>
-                    <span class="fw-500">{{ assignment.class_stream.name }}</span>
+<div class="container-fluid px-3 px-md-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="bi bi-book me-2" style="color: var(--accent-primary);"></i>
+                {{ subject.name }}
+            </h1>
+            <p class="page-subtitle">
+                Subject Code: <span class="code-badge">{{ subject.code }}</span>
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'subject_update' subject.id %}" class="btn btn-outline-secondary">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="{% url 'subject_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Subject Information Card -->
+    <div class="detail-card">
+        <div class="card-header">
+            <h6>
+                <i class="bi bi-info-circle"></i>
+                Subject Information
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="info-row">
+                <div class="info-label">Subject Code</div>
+                <div class="info-value">{{ subject.code }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Subject Name</div>
+                <div class="info-value">{{ subject.name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Description</div>
+                <div class="info-value">{{ subject.description|default:"No description provided." }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Status</div>
+                <div class="info-value">
+                    {% if subject.is_active %}
+                        <span style="color: #15803d;">✓ Active</span>
+                    {% else %}
+                        <span style="color: #b91c1c;">✗ Inactive</span>
+                    {% endif %}
                 </div>
-                <a href="{% url 'class_subject_result' assignment.class_stream.id subject.id %}"
-                   class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-bar-chart me-1"></i>View Performance
-                </a>
-            </li>
-            {% empty %}
-            <li class="text-muted fst-italic py-2">No class streams assigned yet.</li>
-            {% endfor %}
-        </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assigned Class Streams Card -->
+    <div class="detail-card">
+        <div class="card-header">
+            <h6>
+                <i class="bi bi-diagram-3"></i>
+                Assigned Class Streams
+            </h6>
+        </div>
+        <div class="card-body">
+            {% if assignments %}
+                <ul class="assignment-list">
+                    {% for assignment in assignments %}
+                    <li class="assignment-item">
+                        <div class="assignment-info">
+                            <div class="assignment-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <div>
+                                <div class="assignment-name">{{ assignment.class_stream.name }}</div>
+                                <div class="small text-muted">
+                                    <i class="bi bi-calendar"></i> Assigned: {{ assignment.created_at|date:"M d, Y" }}
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{% url 'class_subject_result' assignment.class_stream.id subject.id %}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-bar-chart"></i> View Performance
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-diagram-3"></i>
+                    <p>No class streams assigned to this subject yet.</p>
+                    <a href="{% url 'assign_subject' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-plus-circle"></i> Assign to Class
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="page-footer">
+        <i class="bi bi-shield-check"></i> Official Academic Records — Ikonex Academy
     </div>
 </div>
 

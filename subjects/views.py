@@ -13,7 +13,8 @@ def subject_list(request):
 @staff_required
 def subject_detail(request, pk):
     subject = get_object_or_404(Subject, pk=pk)
-    assignments = subject.classsubject_set.select_related("class_stream").all()
+    # Use the correct related_name - 'class_assignments' (not 'classsubject_set')
+    assignments = subject.class_assignments.select_related("class_stream").all()
     return render(request, 'subjects/detail.html', {
         'subject': subject,
         'assignments': assignments,

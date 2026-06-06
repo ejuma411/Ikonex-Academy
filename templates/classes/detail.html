@@ -1,77 +1,518 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
-{% block title %}{{ class_stream.name }} | Ikonex Academy{% endblock %}
+{% block title %}{{ class_stream.name }} | Class Detail | Ikonex Academy{% endblock %}
 
 {% block content %}
 
-<div class="page-header">
-    <div>
-        <h1 class="page-title">{{ class_stream.name }}</h1>
-        <p class="page-subtitle">Class details, subjects, and enrolled students.</p>
-    </div>
-    <div class="d-flex gap-2 flex-wrap">
-        <a href="{% url 'class_result' class_stream.id %}" class="btn btn-primary">
-            <i class="bi bi-trophy me-1"></i> View Results
-        </a>
-        <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn btn-outline-primary">
-            <i class="bi bi-file-earmark-pdf me-1"></i> PDF Report
-        </a>
-        <a href="{% url 'class_update' class_stream.id %}" class="btn btn-outline-secondary">
-            <i class="bi bi-pencil me-1"></i> Edit
-        </a>
-        <a href="{% url 'class_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back
-        </a>
-    </div>
-</div>
+<style>
+    :root {
+        --accent-primary: #1a4d8c;
+        --accent-secondary: #2d6a4f;
+        --accent-gold: #c49a2b;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
 
-<div class="row g-4">
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
 
-    <!-- Subjects -->
-    <div class="col-md-5">
-        <div class="card h-100">
-            <div class="card-body">
-                <h6 class="fw-700 text-muted fs-sm text-uppercase mb-3" style="letter-spacing:.08em">
-                    Subjects
-                </h6>
-                <ul class="list-unstyled mb-0">
-                    {% for assignment in subjects %}
-                    <li class="py-2 border-bottom d-flex align-items-center gap-2">
-                        <i class="bi bi-book text-brand"></i>
-                        <span>{{ assignment.subject.name }}</span>
-                    </li>
-                    {% empty %}
-                    <li class="text-muted fst-italic">No subjects assigned yet.</li>
-                    {% endfor %}
-                </ul>
-            </div>
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: var(--gray-800);
+        font-family: 'Georgia', 'Times New Roman', serif;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--gray-500);
+        margin: 0;
+        font-size: 0.85rem;
+    }
+
+    /* Summary stat badges */
+    .class-meta {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .meta-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--gray-100);
+        border: 1px solid var(--gray-200);
+        border-radius: 2rem;
+        padding: 0.35rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+
+    .meta-badge i { color: var(--accent-primary); }
+
+    /* Panel cards */
+    .panel {
+        background: #fff;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        background: var(--accent-primary);
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .panel-header h6 {
+        margin: 0;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .panel-badge {
+        background: rgba(255,255,255,0.25);
+        color: #fff;
+        border-radius: 2rem;
+        padding: 0.15rem 0.6rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+
+    .panel-body {
+        padding: 0;
+    }
+
+    /* Student search */
+    .search-box {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .search-box input {
+        width: 100%;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.375rem;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.82rem;
+        color: var(--gray-700);
+        outline: none;
+        transition: border-color 0.15s;
+    }
+
+    .search-box input:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(26,77,140,0.1);
+    }
+
+    /* Student list */
+    .student-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 480px;
+        overflow-y: auto;
+    }
+
+    .student-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.65rem 1.25rem;
+        border-bottom: 1px solid var(--gray-100);
+        transition: background 0.15s;
+    }
+
+    .student-item:last-child {
+        border-bottom: none;
+    }
+
+    .student-item:hover {
+        background: var(--gray-50);
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .student-avatar {
+        width: 34px;
+        height: 34px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .student-name-block {
+        min-width: 0;
+    }
+
+    .student-name-text {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--gray-800);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .student-adm {
+        font-size: 0.72rem;
+        color: var(--gray-500);
+    }
+
+    .student-actions {
+        display: flex;
+        gap: 0.4rem;
+        flex-shrink: 0;
+        margin-left: 0.5rem;
+    }
+
+    .btn-result {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.25rem 0.65rem;
+        border: 1px solid var(--accent-primary);
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: all 0.15s;
+        white-space: nowrap;
+    }
+
+    .btn-result:hover {
+        background: var(--accent-primary);
+        color: #fff;
+    }
+
+    /* Subject list */
+    .subject-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .subject-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.65rem 1.25rem;
+        border-bottom: 1px solid var(--gray-100);
+        gap: 0.5rem;
+        transition: background 0.15s;
+    }
+
+    .subject-item:last-child { border-bottom: none; }
+    .subject-item:hover { background: var(--gray-50); }
+
+    .subject-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--gray-800);
+    }
+
+    .subject-code {
+        font-size: 0.7rem;
+        background: var(--gray-100);
+        border-radius: 0.25rem;
+        padding: 0.1rem 0.5rem;
+        color: var(--gray-600);
+        font-family: monospace;
+    }
+
+    .btn-subject-result {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0.6rem;
+        border: 1px solid #2d6a4f;
+        border-radius: 0.25rem;
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: #2d6a4f;
+        text-decoration: none;
+        transition: all 0.15s;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .btn-subject-result:hover {
+        background: #2d6a4f;
+        color: #fff;
+    }
+
+    /* Empty state */
+    .empty-msg {
+        padding: 2rem;
+        text-align: center;
+        color: var(--gray-500);
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    /* Action buttons in header */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: var(--accent-primary);
+        color: #fff;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 500;
+        border: none;
+        transition: all 0.2s;
+    }
+    .btn-primary:hover { background: #0f3b6b; }
+
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: transparent;
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+        border-radius: 0.375rem;
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn-outline:hover { background: var(--gray-100); }
+
+    .btn-success-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: transparent;
+        color: var(--accent-secondary);
+        border: 1px solid var(--accent-secondary);
+        border-radius: 0.375rem;
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn-success-outline:hover { background: var(--accent-secondary); color: #fff; }
+
+    @media (max-width: 768px) {
+        .page-header { flex-direction: column; align-items: flex-start; }
+        .student-actions { flex-direction: column; }
+    }
+</style>
+
+<div class="container-fluid px-3 px-md-4">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="bi bi-building" style="color: var(--accent-primary);"></i>
+                {{ class_stream.name }}
+            </h1>
+            <p class="page-subtitle">Class roster, subjects, and quick links to student results.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'class_result' class_stream.id %}" class="btn-primary">
+                <i class="bi bi-trophy"></i> Class Results
+            </a>
+            <a href="{% url 'class_report_pdf' class_stream.id %}" class="btn-success-outline">
+                <i class="bi bi-file-earmark-pdf"></i> PDF Report
+            </a>
+            <a href="{% url 'class_update' class_stream.id %}" class="btn-outline">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="{% url 'class_list' %}" class="btn-outline">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
         </div>
     </div>
 
-    <!-- Students -->
-    <div class="col-md-7">
-        <div class="card h-100">
-            <div class="card-body">
-                <h6 class="fw-700 text-muted fs-sm text-uppercase mb-3" style="letter-spacing:.08em">
-                    Students ({{ students|length }})
-                </h6>
-                <ul class="list-unstyled mb-0">
-                    {% for student in students %}
-                    <li class="py-2 border-bottom d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-person text-muted"></i>
-                            <span>{{ student.first_name }} {{ student.last_name }}</span>
-                        </div>
-                        <span class="fs-sm text-muted">{{ student.admission_no }}</span>
-                    </li>
-                    {% empty %}
-                    <li class="text-muted fst-italic">No students enrolled yet.</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
+    <!-- Meta badges -->
+    <div class="class-meta">
+        <span class="meta-badge">
+            <i class="bi bi-people-fill"></i>
+            {{ students|length }} Student{{ students|length|pluralize }}
+        </span>
+        <span class="meta-badge">
+            <i class="bi bi-book-fill"></i>
+            {{ subjects|length }} Subject{{ subjects|length|pluralize }}
+        </span>
     </div>
 
+    <div class="row g-4">
+
+        <!-- Students Panel -->
+        <div class="col-lg-7">
+            <div class="panel">
+                <div class="panel-header">
+                    <h6>
+                        <i class="bi bi-people-fill"></i>
+                        Enrolled Students
+                    </h6>
+                    <span class="panel-badge">{{ students|length }}</span>
+                </div>
+                <div class="panel-body">
+                    {% if students %}
+                    <!-- Live search -->
+                    <div class="search-box">
+                        <input type="text" id="studentSearch" placeholder="🔍  Search students by name or admission no…"
+                               oninput="filterStudents(this.value)" autocomplete="off">
+                    </div>
+                    <ul class="student-list" id="studentList">
+                        {% for student in students %}
+                        <li class="student-item"
+                            data-name="{{ student.first_name|lower }} {{ student.last_name|lower }}"
+                            data-adm="{{ student.admission_no|lower }}">
+                            <div class="student-info">
+                                <div class="student-avatar">
+                                    {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                                </div>
+                                <div class="student-name-block">
+                                    <div class="student-name-text">
+                                        {{ student.last_name }}, {{ student.first_name }}
+                                    </div>
+                                    <div class="student-adm">
+                                        <i class="bi bi-hash"></i> {{ student.admission_no }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="student-actions">
+                                <a href="{% url 'student_result' student.pk %}" class="btn-result">
+                                    <i class="bi bi-bar-chart-line"></i> Results
+                                </a>
+                                <a href="{% url 'student_report_pdf' student.pk %}" class="btn-result"
+                                   style="border-color: #2d6a4f; color: #2d6a4f;">
+                                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                                </a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                        <!-- No-results row (hidden by default) -->
+                        <li class="student-item" id="noStudentMatch" style="display:none; justify-content: center; color: var(--gray-500); font-style: italic; font-size: 0.82rem;">
+                            <i class="bi bi-search me-2"></i> No students match your search.
+                        </li>
+                    </ul>
+                    {% else %}
+                    <div class="empty-msg">
+                        <i class="bi bi-person-x" style="font-size: 2rem; display:block; margin-bottom:0.5rem; color: var(--gray-300);"></i>
+                        No students enrolled in this class yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects Panel -->
+        <div class="col-lg-5">
+            <div class="panel">
+                <div class="panel-header">
+                    <h6>
+                        <i class="bi bi-book-fill"></i>
+                        Assigned Subjects
+                    </h6>
+                    <span class="panel-badge">{{ subjects|length }}</span>
+                </div>
+                <div class="panel-body">
+                    {% if subjects %}
+                    <ul class="subject-list">
+                        {% for assignment in subjects %}
+                        <li class="subject-item">
+                            <div class="subject-info">
+                                <i class="bi bi-journal-bookmark" style="color: var(--accent-primary);"></i>
+                                {{ assignment.subject.name }}
+                                {% if assignment.subject.code %}
+                                <span class="subject-code">{{ assignment.subject.code }}</span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'class_subject_result' class_stream.id assignment.subject.id %}"
+                               class="btn-subject-result">
+                                <i class="bi bi-graph-up"></i> Subject Results
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="empty-msg">
+                        <i class="bi bi-book-x" style="font-size: 2rem; display:block; margin-bottom:0.5rem; color: var(--gray-300);"></i>
+                        No subjects assigned to this class yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.7rem; color: var(--gray-500); border-top: 1px solid var(--gray-200); padding-top: 0.75rem;">
+        <i class="bi bi-shield-check"></i> Official Academic Records — Ikonex Academy
+    </div>
 </div>
+
+<script>
+function filterStudents(query) {
+    const q = query.toLowerCase().trim();
+    const items = document.querySelectorAll('#studentList .student-item:not(#noStudentMatch)');
+    let visible = 0;
+    items.forEach(item => {
+        const name = item.dataset.name || '';
+        const adm  = item.dataset.adm  || '';
+        const show = !q || name.includes(q) || adm.includes(q);
+        item.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    document.getElementById('noStudentMatch').style.display = visible === 0 ? '' : 'none';
+}
+</script>
 
 {% endblock %}

@@ -240,13 +240,32 @@ def class_report_pdf(request, class_id):
 @staff_required
 def class_subject_result_view(request, class_id, subject_id):
     result = class_subject_ranking(class_id, subject_id)
+    ranking = result["ranking"]
+
+    # Compute statistics for the subject performance summary cards
+    if ranking:
+        total_students = len(ranking)
+        class_average = round(sum(item["average"] for item in ranking) / total_students, 1)
+        highest_score = max(item["total"] for item in ranking)
+        pass_count = sum(1 for item in ranking if item.get("grade") not in ["E", "F", "N/A"])
+    else:
+        total_students = 0
+        class_average = 0
+        highest_score = 0
+        pass_count = 0
+
     return render(
         request,
         "reports/subject_class_report.html",
         {
             "class_stream": result["class_stream"],
             "subject": result["subject"],
-            "ranking": result["ranking"],
+            "ranking": ranking,
+            "total_students": total_students,
+            "class_average": class_average,
+            "highest_score": highest_score,
+            "pass_count": pass_count,
+            "current_date": timezone.now(),
         },
     )
 
